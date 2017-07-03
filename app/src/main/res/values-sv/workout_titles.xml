@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="type_title_label_unknown">Okänd typ</string>
+    <string name="type_title_cykel">Biking</string>
+    <string name="type_title_gympa">Gympa</string>
+    <string name="type_title_member_happenings">Medlemsaktiviteter och event</string>
+    <string name="type_title_for_barn">För barn</string>
+    <string name="type_title_mamma_baby">Mamma baby</string>
+    <string name="type_title_cirkeltraning">Cirkelträning</string>
+    <string name="type_title_lopfokus">Löpfokus</string>
+    <string name="type_title_stavgang">Stavgång</string>
+    <string name="type_title_climbing">Klättring</string>
+    <string name="type_title_bollsport">Bollsporter</string>
+    <string name="type_title_beach">Beachvolleyboll</string>
+</resources>

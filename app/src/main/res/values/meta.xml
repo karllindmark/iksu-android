@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="transition_workout_title" translatable="false">workoutTitle</string>
+    <string name="transition_workout_status" translatable="false">workoutStatus</string>
+</resources>

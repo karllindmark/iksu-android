@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1019626704068",
+    "firebase_url": "https://iksu-f989e.firebaseio.com",
+    "project_id": "iksu-f989e",
+    "storage_bucket": "iksu-f989e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019626704068:android:f071ae41c2d9e793",
+        "android_client_info": {
+          "package_name": "com.ninetwozero.iksu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1019626704068-thbv246egmvjr3afq89g1fru3o7sgor1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcxlWtFMWRSsh_F0u3kNMwblkaAzvnmX0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

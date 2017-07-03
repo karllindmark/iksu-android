@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+        <import type="android.view.View"/>
+        <variable name="link" type="com.ninetwozero.iksu.features.about.Link" />
+        <variable name="callbacks" type="com.ninetwozero.iksu.features.about.AboutListCallbacks" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_twoline_height"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:padding="@dimen/spacing_double"
+        android:onClick="@{(view) -> callbacks.onLinkClicked(link)}"
+        android:longClickable="true"
+        tools:background="@color/colorAccentLight"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/icon"
+            android:layout_width="@dimen/account_list_avatar_size"
+            android:layout_height="@dimen/account_list_avatar_size"
+            app:srcCompat="@drawable/ic_account_circle_black_24dp"
+            android:contentDescription="@string/cdesc_avatar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{link.title}"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:layout_marginStart="@dimen/spacing_double"
+            app:layout_constraintStart_toEndOf="@id/icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="start"
+            tools:text="@string/dummy_link_name"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            />
+
+
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{link.subtitle}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:layout_marginStart="@dimen/spacing_double"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintStart_toEndOf="@id/icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="@string/dummy_link_subtitle"
+            android:textColor="@color/white"
+            />
+    </android.support.constraint.ConstraintLayout>
+</layout>

@@ -1,0 +1,104 @@
+apply plugin: 'com.android.application'
+
+project.ext.iksu = [
+    apiUsername: '',
+    apiPassword: '',
+    apiGrant: '',
+
+    accountEmail: '',
+    accountPassword: '',
+
+    keyStorePath: "~/.android/debug.keystore",
+    keystoreItemAlias: 'androiddebugkey',
+    keystoreItemPassword: 'android'
+]
+loadExtraProperties("credentials.properties");
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+    defaultConfig {
+        applicationId "com.ninetwozero.iksu"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 2
+        versionName "1.0 (ABDOMINAL)"
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "API_USER", '"' + project.iksu['apiUsername'] + '"'
+        buildConfigField "String", "API_PASSWORD", '"' + project.iksu['apiPassword'] + '"'
+        buildConfigField "String", "API_GRANT", '"' + project.iksu['apiGrant'] + '"'
+
+        buildConfigField "String", "ACCOUNT_EMAIL", '"' + project.iksu['accountEmail'] + '"'
+        buildConfigField "String", "ACCOUNT_PASSWORD", '"' + project.iksu['accountPassword'] + '"'
+    }
+
+    signingConfigs {
+        defaultConfig {
+            storeFile file(project.iksu['keystorePath'])
+            storePassword = project.iksu['keystorePassword']
+            keyAlias = project.iksu['keystoreItemAlias']
+            keyPassword = project.iksu['keystoreItemPassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.defaultConfig
+
+            buildConfigField "String", "ACCOUNT_EMAIL", '""'
+            buildConfigField "String", "ACCOUNT_PASSWORD", '""'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:preference-v14:25.3.1'
+
+    compile 'com.afollestad.material-dialogs:core:0.9.4.3'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+
+    compile 'com.jakewharton:butterknife:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+
+    compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-moshi:2.3.0'
+    compile 'com.squareup.moshi:moshi:1.5.0'
+
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
+
+    compile 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
+    compile 'io.realm:android-adapters:2.0.0'
+
+    // Crash reporting and event logging
+    compile 'com.google.firebase:firebase-core:10.2.4'
+    compile 'com.google.firebase:firebase-crash:10.2.4'
+
+
+    testCompile 'junit:junit:4.12'
+}
+
+// https://stackoverflow.com/a/30105276/860212
+def loadExtraProperties(String fileName) {
+    def props = new Properties()
+    props.load(new FileInputStream(fileName))
+    props.each { key, val ->
+        project.ext.iksu[key] = val
+    }
+}
+
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'realm-android'

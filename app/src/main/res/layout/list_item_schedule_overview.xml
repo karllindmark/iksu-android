@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="android.view.View" />
+        <variable name="handler" type="com.ninetwozero.iksu.features.schedule.listing.WorkoutListCallbacks" />
+        <variable name="workout" type="com.ninetwozero.iksu.models.Workout" />
+        <variable name="inactive" type="boolean" />
+        <variable name="actionText" type="String" />
+        <variable name="statusTint" type="int" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="@{(view) -> handler.onWorkoutClick(view, workout)}"
+        android:clickable="true"
+        android:padding="@dimen/spacing_double"
+        android:alpha="@{inactive ? 0.3f : 1.0f}">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_begin="0dp"
+            android:orientation="vertical"
+            />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_56"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_begin="40dp"
+            android:orientation="vertical"
+            />
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_72"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_begin="56dp"
+            android:orientation="vertical"
+            />
+
+        <TextView
+            android:id="@+id/start_hour"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:maxLength="2"
+            android:text="@{workout.startDateString.substring(11, 13)}"
+            android:gravity="start"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+
+            app:layout_constraintStart_toStartOf="@id/guideline_16"
+            app:layout_constraintEnd_toStartOf="@id/guideline_56"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="17"
+            />
+
+        <TextView
+            android:id="@+id/start_minute"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:maxLength="2"
+            android:text="@{workout.startDateString.substring(14, 16)}"
+            android:gravity="end"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/black"
+
+            app:layout_constraintStart_toStartOf="@id/guideline_16"
+            app:layout_constraintEnd_toStartOf="@id/guideline_56"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_constraintTop_creator="1"
+
+            tools:text="25"
+            />
+
+
+        <FrameLayout
+            android:id="@+id/wrap_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:transitionName="@string/transition_workout_status"
+        >
+                <TextView
+                    android:id="@+id/slots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/chip_background"
+                    android:backgroundTint="@{statusTint}"
+                    android:text="@{actionText}"
+                    tools:text="32/33"
+                    android:textColor="#ddffffff"
+                    android:textSize="13sp"
+                    android:minEms="3"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:visibility="@{inactive ? View.GONE : View.VISIBLE}"
+                    />
+                <ImageView
+                    android:id="@+id/status_icon"
+                    android:layout_width="@dimen/schedule_detail_fragment_action_size"
+                    android:layout_height="@dimen/schedule_detail_fragment_action_size"
+                    app:srcCompat="@drawable/ic_info_black_24dp"
+                    android:tint="#CCCCCC"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:contentDescription="@string/cdesc_status_icon"
+                    android:visibility="@{inactive ? View.VISIBLE : View.GONE}"
+                    android:layout_gravity="end"
+                    />
+        </FrameLayout>
+
+        <TextView
+            style="@style/NormalListTitle"
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{workout.title}"
+
+            app:layout_constraintStart_toStartOf="@id/guideline_72"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/wrap_status"
+            app:layout_constraintVertical_chainStyle="packed"
+
+            android:layout_marginEnd="@dimen/spacing_double"
+            android:transitionName="@string/transition_workout_title"
+
+            tools:text="Total Training" />
+
+        <TextView
+            style="@style/NormalListText"
+            android:id="@+id/trainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{workout.getInstructorNames()}"
+
+            app:layout_constraintStart_toStartOf="@id/title"
+            app:layout_constraintEnd_toEndOf="@id/title"
+            app:layout_constraintTop_toBottomOf="@id/title"
+
+            tools:text="@string/dummy_name" />
+
+        <TextView
+            style="@style/NormalListText"
+            android:id="@+id/location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{workout.facility}"
+
+            app:layout_constraintStart_toStartOf="@id/trainer"
+            app:layout_constraintEnd_toEndOf="@id/trainer"
+            app:layout_constraintTop_toBottomOf="@id/trainer"
+            android:clipToPadding="false"
+
+            tools:text="@string/facility_sport" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

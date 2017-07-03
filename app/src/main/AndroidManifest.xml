@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ninetwozero.iksu">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".app.IksuApp"
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/StandardActivity">
+        <activity
+            android:name=".features.shared.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/PrimaryActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:theme="@style/PrimaryActivity"
+            android:name=".features.schedule.detail.WorkoutDetailActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".features.shared.MainActivity"
+        >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.shared.MainActivity"/>
+        </activity>
+        <activity
+            android:name=".features.accounts.LoginActivity"
+            android:theme="@style/PrimaryActivity"
+            android:label=""
+            android:parentActivityName=".features.shared.MainActivity"
+        >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.shared.MainActivity"/>
+        </activity>
+        <activity
+            android:theme="@style/PrimaryActivity"
+            android:name=".features.accounts.ManageAccountsActivity"
+            android:parentActivityName=".features.shared.MainActivity"
+        >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.shared.MainActivity"/>
+
+        </activity>
+        <activity
+            android:name=".features.schedule.filter.ScheduleFilterActivity"
+            android:theme="@style/PrimaryActivity"
+            android:label=""
+            android:parentActivityName=".features.shared.MainActivity"
+        >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.shared.MainActivity"/>
+        </activity>
+        <activity
+            android:theme="@style/PrimaryActivity"
+            android:name=".features.about.AboutActivity"
+            android:parentActivityName=".features.shared.MainActivity"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.shared.MainActivity"/>
+        </activity>
+        <activity
+            android:name=".features.shared.DeepLinkingActivity"
+            android:label="@string/app_name"
+            android:theme="@style/PrimaryActivity"
+            android:launchMode="singleTask"
+        >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="bokning.iksu.se"
+                    android:pathPrefix="/index.php"
+                />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".network.IksuWorkoutService"
+            android:exported="false"/>
+        <service
+          android:name=".network.IksuLoginService"
+          android:exported="false"
+          />
+        <service
+          android:name=".network.IksuReservationService"
+          android:exported="false"
+          />
+    </application>
+
+</manifest>

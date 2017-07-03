@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="type_title_label_unknown">Unknown type</string>
+    <string name="type_title_yoga" translatable="false">Yoga</string>
+    <string name="type_title_indoor_walking" translatable="false">Indoor Walking</string>
+    <string name="type_title_total_training" translatable="false">Total Training</string>
+    <string name="type_title_cykel">Biking</string>
+    <string name="type_title_cxworx" translatable="false">CXWORK</string>
+    <string name="type_title_aqua" translatable="false">Aqua</string>
+    <string name="type_title_step" translatable="false">Step</string>
+    <string name="type_title_pilates_reformer" translatable="false">Pilates Reformer</string>
+    <string name="type_title_bodypump" translatable="false">BODYPUMP</string>
+    <string name="type_title_gympa">Gympa</string>
+    <string name="type_title_pilates" translatable="false">Pilates</string>
+    <string name="type_title_grit" translatable="false">GRIT</string>
+    <string name="type_title_bodybalance" translatable="false">BODYBALANCE</string>
+    <string name="type_title_member_happenings">Special events/happenings</string>
+    <string name="type_title_bodyjam" translatable="false">BODYJAM</string>
+    <string name="type_title_for_barn">For kids</string>
+    <string name="type_title_zumba" translatable="false">Zumba</string>
+    <string name="type_title_bodystep" translatable="false">BODYSTEP</string>
+    <string name="type_title_shbam" translatable="false">SH\'BAM</string>
+    <string name="type_title_bodycombat" translatable="false">BODYCOMBAT</string>
+    <string name="type_title_mojo_flex" translatable="false">MOJO Flex</string>
+    <string name="type_title_squash" translatable="false">Squash</string>
+    <string name="type_title_punchout" translatable="false">Punch Out</string>
+    <string name="type_title_dance" translatable="false">Dance</string>
+    <string name="type_title_soma_move" translatable="false">Soma Move</string>
+    <string name="type_title_mamma_baby"><![CDATA[Mom & Baby]]></string>
+    <string name="type_title_bodyvive" translatable="false">BODYVIVE</string>
+    <string name="type_title_barre" translatable="false">Barre Move</string>
+    <string name="type_title_cirkeltraning">Circuit Training</string>
+    <string name="type_title_core_control" translatable="false">Core Control</string>
+    <string name="type_title_lopfokus">Running</string>
+    <string name="type_title_stavgang">Nordic Walking</string>
+    <string name="type_title_climbing">Climbing</string>
+    <string name="type_title_bollsport">Ball sports</string>
+    <string name="type_title_beach">Beach Volleyball</string>
+</resources>
