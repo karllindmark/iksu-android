@@ -153,6 +153,7 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
     @Override
     public void reconfigureListDataSource() {
         adapter.updateData(loadWorkoutsFromDatabase(shouldOnlyLoadWorkoutsRelevantToAccount, shouldUseFilterSettings));
+        setUiState(adapter.getItemCount() == 0 ? STATE_EMPTY : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
     }
 
     private OrderedRealmCollection<Workout> loadWorkoutsFromDatabase(final boolean fromConnectedAccount, final boolean useFilters) {
