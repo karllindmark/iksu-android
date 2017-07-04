@@ -73,6 +73,7 @@ public class ReservationListAdapter extends RecyclerView.Adapter<ReservationList
                 } else {
                     bindReservationRow((Workout) reservationListItem);
                 }
+                binding.executePendingBindings();
             }
 
             private void bindHeader(ReservationListHeader header) {

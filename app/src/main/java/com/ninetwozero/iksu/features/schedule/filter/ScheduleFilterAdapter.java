@@ -90,6 +90,7 @@ public class ScheduleFilterAdapter extends RecyclerView.Adapter<ScheduleFilterAd
             } else {
                 binding.setVariable(BR.title, context.getString(workoutUiHelper.getTitleForFilter(items.get(position).getId(), items.get(position).getType())));
             }
+            this.binding.executePendingBindings();
         }
     }
 }

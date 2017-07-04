@@ -127,7 +127,6 @@ abstract public class BaseFilterFragment extends BaseListFragment<ScheduleFilter
         for (ScheduleFilterItem item : activeFilters) {
             items.put(item.getId(), item);
         }
-
         return items;
     }
 
