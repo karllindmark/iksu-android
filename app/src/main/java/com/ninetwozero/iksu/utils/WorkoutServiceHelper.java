@@ -11,8 +11,10 @@ import com.ninetwozero.iksu.models.WorkoutReservation;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.realm.Realm;
 import retrofit2.Response;
@@ -175,12 +177,7 @@ public class WorkoutServiceHelper {
                 }
             }
 
-            realm.where(Workout.class)
-                .equalTo(Constants.CONNECTED_ACCOUNT, connectedAccount)
-                .equalTo(Constants.RESERVATION_ID, 0)
-                .findAll()
-                .deleteAllFromRealm();
-
+            final Set<String> newWorkoutIds = new HashSet<>(workouts.size());
             for (Workout workout : workouts) {
                 if (wasUserCall) {
                     workout.setPkId(workout.getId() + "_" + connectedAccount);
@@ -192,12 +189,29 @@ public class WorkoutServiceHelper {
                 if (workoutMap.containsKey(workout.getId())) {
                     workout.setReservationId(workoutMap.get(workout.getId()));
                 }
+
+                newWorkoutIds.add(workout.getId());
             }
+
+            removeObsoleteWorkoutsWithoutReservations(realm, newWorkoutIds, connectedAccount);
+
             realm.insertOrUpdate(workouts);
             result = workouts.size();
         }
         realm.commitTransaction();
         return result;
+    }
+
+    private void removeObsoleteWorkoutsWithoutReservations(Realm realm, Set<String> newWorkoutIds, String connectedAccount) {
+        realm.where(Workout.class)
+            .beginGroup()
+            .equalTo(Constants.CONNECTED_ACCOUNT, connectedAccount)
+            .equalTo(Constants.RESERVATION_ID, 0)
+            .endGroup()
+            .not()
+            .in(Constants.ID, newWorkoutIds.toArray(new String[newWorkoutIds.size()]))
+            .findAll()
+            .deleteAllFromRealm();
     }
 
     private void removeNonExistentFutureReservations(Realm realm, Long[] reservationIds, String connectedAccount) {
