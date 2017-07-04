@@ -81,7 +81,7 @@ abstract public class BaseActivity extends AppCompatActivity {
                 if (loggedIn) {
                     Toast.makeText(getApplicationContext(), getString(R.string.msg_signed_in_as_x, IksuApp.getActiveAccount().getUsername()), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.msg_sign_in_failed, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.msg_sign_in_failed, Toast.LENGTH_LONG).show();
                 }
 
                 if (loginCallback != null) {
