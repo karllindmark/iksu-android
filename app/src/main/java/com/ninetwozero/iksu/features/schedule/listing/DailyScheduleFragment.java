@@ -73,6 +73,14 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
 
         if (sharedPreferences.contains(IksuApp.getLatestRefreshKey())) {
             setUiState(adapter.getItemCount() == 0 ? STATE_EMPTY : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
+
+            // Pre-secroll the list to the first "reservable" class
+            for (int i = 0, max = adapter.getItemCount(); i < max; i++) {
+                if (adapter.getItem(i).isOpenForReservations()) {
+                    recyclerView.scrollToPosition(i);
+                    break;
+                }
+            }
         } else {
             setUiState(STATE_LOADING, R.string.msg_loading_workouts);
         }
