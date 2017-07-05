@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity {
         setupNavigationDrawer();
 
         if (savedInstanceState == null) {
-            goToFeature(getDefaultNavigationViewIdToCheck());
+            goToFeature(getDefaultNavigationViewIdToCheck(), userLearnedDrawer);
         }
     }
 
@@ -141,7 +141,7 @@ public class MainActivity extends BaseActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == IksuLoginService.LOGIN_REQUESTED || (requestCode == ManageAccountsActivity.REQUEST) && data.getBooleanExtra(ManageAccountsActivity.HAS_CHANGES, false)) {
                 updateAccountBox();
-                goToFeature(R.id.menu_all_classes);
+                goToFeature(R.id.menu_all_classes, true);
             }
         }
     }
@@ -161,7 +161,7 @@ public class MainActivity extends BaseActivity {
                     }, 300);
                     return false;
                 }
-                return goToFeature(item.getItemId());
+                return goToFeature(item.getItemId(), true);
             }
         });
 
@@ -221,7 +221,7 @@ public class MainActivity extends BaseActivity {
                     sharedPreferences.edit().putString(Constants.CURRENT_USER, username).apply();
                     IksuApp.setActiveUser(realm.copyFromRealm(realm.where(UserAccount.class).equalTo(Constants.USERNAME, username).findFirst()));
                     updateAccountBox();
-                    goToFeature(navigationView.getMenu().findItem(R.id.menu_reservations).isChecked() ? R.id.menu_reservations : R.id.menu_all_classes);
+                    goToFeature(navigationView.getMenu().findItem(R.id.menu_reservations).isChecked() ? R.id.menu_reservations : R.id.menu_all_classes, true);
                 }
             });
     }
@@ -270,7 +270,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private boolean goToFeature(final int menuItemId) {
+    private boolean goToFeature(final int menuItemId, boolean closeDrawer) {
         final Bundle data = new Bundle();
 
         Fragment fragment = null;
@@ -311,7 +311,7 @@ public class MainActivity extends BaseActivity {
         if (fragment != null) {
             fragment.setArguments(data);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, fragment).commit();
-            drawerLayout.closeDrawer(GravityCompat.START, true);
+            drawerLayout.closeDrawer(GravityCompat.START, closeDrawer);
             return true;
         }
 
