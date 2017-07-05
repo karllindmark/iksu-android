@@ -51,7 +51,7 @@ public class AboutAppFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused") // Used by ButterKnife
-    @OnClick(R.id.app_name)
+    @OnClick({R.id.app_name_1, R.id.app_name_2})
     public void onLogoClicked(final View view) {
         String message = null;
 
