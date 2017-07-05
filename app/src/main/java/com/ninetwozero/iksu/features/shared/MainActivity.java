@@ -184,14 +184,13 @@ public class MainActivity extends BaseActivity {
         };
 
         updateAccountBox();
+        navigationView.getMenu().findItem(getDefaultNavigationViewIdToCheck()).setChecked(true);
 
         // Set the drawer toggle as the DrawerListener
         drawerLayout.addDrawerListener(drawerToggle);
         if (!userLearnedDrawer) {
             drawerLayout.openDrawer(GravityCompat.START);
         }
-
-        navigationView.getMenu().findItem(getDefaultNavigationViewIdToCheck()).setChecked(true);
     }
 
     private int getDefaultNavigationViewIdToCheck() {
@@ -318,7 +317,6 @@ public class MainActivity extends BaseActivity {
 
         if (intent != null) {
             startActivityForResult(intent, requestId);
-            return true;
         }
         return false;
     }
