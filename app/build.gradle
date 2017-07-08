@@ -8,11 +8,11 @@ project.ext.iksu = [
     accountEmail: '',
     accountPassword: '',
 
-    keystorePath: "~/.android/debug.keystore",
-    keystoreItemAlias: 'androiddebugkey',
-    keystoreItemPassword: 'android'
+    keystorePath: '',
+    keystoreItemAlias: '',
+    keystoreItemPassword: ''
 ]
-loadExtraProperties("credentials.properties");
+loadExtraProperties("credentials.properties")
 
 android {
     compileSdkVersion 25
@@ -93,11 +93,17 @@ dependencies {
 
 // https://stackoverflow.com/a/30105276/860212
 def loadExtraProperties(String fileName) {
+    String loadFile;
     def props = new Properties()
-    props.load(new FileInputStream(fileName))
-    props.each { key, val ->
-        project.ext.iksu[key] = val
+    if (new File(fileName).exists()) {
+        loadFile = fileName
+    } else {
+        loadFile = "credentials.properties.sample"
     }
+        props.load(new FileInputStream(loadFile))
+        props.each { key, val ->
+            project.ext.iksu[key] = val
+        }
 }
 
 apply plugin: 'com.google.gms.google-services'
