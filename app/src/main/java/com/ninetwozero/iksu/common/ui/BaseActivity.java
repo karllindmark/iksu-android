@@ -77,15 +77,14 @@ abstract public class BaseActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(IksuLoginService.ACTION_LOGIN)) {
-                final boolean loggedIn = intent.getIntExtra(IksuLoginService.STATUS, -1) == LoginHelper.RESULT_OK;
+                final int status = intent.getIntExtra(IksuLoginService.STATUS, -1);
+                final boolean loggedIn = status == LoginHelper.RESULT_OK;
                 if (loggedIn) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.msg_signed_in_as_x, IksuApp.getActiveAccount().getUsername()), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.msg_sign_in_failed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.msg_signed_in_as_x, IksuApp.getActiveUsername()), Toast.LENGTH_SHORT).show();
                 }
 
                 if (loginCallback != null) {
-                    loginCallback.onLoginStateChanged(loggedIn);
+                    loginCallback.onLoginStateChanged(loggedIn, status);
                 }
             }
 
@@ -97,7 +96,7 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
 
     public interface LoginCallback {
-        void onLoginStateChanged(boolean loggedIn);
+        void onLoginStateChanged(boolean loggedIn, int status);
     }
 
     protected abstract @LayoutRes int getLayoutId();

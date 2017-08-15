@@ -91,11 +91,12 @@ public class WorkoutServiceHelper {
             callback.onNewState(STATE_DOWNLOADING);
         }
 
+        final boolean isUserCall = shouldDoUserCall && userAccount != null && !userAccount.isDisabled();
         int status;
         try {
             List<Workout> workouts;
             List<WorkoutReservation> reservations;
-            if (shouldDoUserCall && !userAccount.isDisabled()) {
+            if (isUserCall) {
                 workouts =  IksuApp.getApi().getUserWorkoutsBetweenDates(userAccount.getSessionId(), fromDate, toDate).execute().body();
                 reservations = IksuApp.getApi().getUserReservations(userAccount.getSessionId()).execute().body();
             } else {
@@ -104,11 +105,11 @@ public class WorkoutServiceHelper {
             }
 
             status = handleResponseBodyForMultiple(
-                    workouts,
-                    reservations,
-                    realm,
-                    userAccount,
-                    shouldDoUserCall && !userAccount.isDisabled()
+                workouts,
+                reservations,
+                realm,
+                userAccount,
+                isUserCall
             );
         } catch (IOException ignored) {
             status = WorkoutServiceHelper.RESULT_ERROR;

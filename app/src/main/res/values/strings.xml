@@ -68,6 +68,9 @@
     <string name="label_about_dependencies">Open Source</string>
     <string name="label_the_x_release">The %1$s release:</string>
     <string name="label_close">Close</string>
+    <string name="label_share">Share</string>
+    <string name="label_changelog">Changelog</string>
+    <string name="label_rate_the_app">Rate the app on Google Play</string>
 
     <!-- Messages -->
     <string name="msg_loading_workouts">Loading classes</string>
@@ -106,6 +109,9 @@
     <string name="msg_about_send_email">Send us an e-mail</string>
     <string name="msg_about_github">Help us out on Github</string>
     <string name="msg_no_accounts">No accounts found - add one?</string>
+    <string name="msg_workout_not_found">Class could not be found</string>
+    <string name="msg_downloading_workout">Downloading class...</string>
+    <string name="msg_login_error_blocked">Your IKSU account seems to be locked.</string>
 
     <!-- Content descriptions -->
     <string name="cdesc_avatar">User avatar</string>
@@ -117,10 +123,6 @@
     <string name="facility_plus" translatable="false">IKSU Plus</string>
     <string name="facility_unknown">Unknown facility</string>
     <string name="random_drumroll">*drumroll*</string>
-    <string name="label_changelog">Changelog</string>
-    <string name="label_rate_the_app">Rate the app on Google Play</string>
     <string name="x_by_y">%1$s by %2$s</string>
-    <string name="msg_workout_not_found">Class could not be found</string>
-    <string name="msg_downloading_workout">Downloading class...</string>
-    <string name="label_share">Share</string>
+    <string name="msg_account_disabled">Account \'%1$s\' has been disabled</string>
 </resources>

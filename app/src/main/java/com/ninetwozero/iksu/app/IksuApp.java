@@ -7,9 +7,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.models.UserAccount;
 import com.ninetwozero.iksu.network.IksuApi;
 import com.ninetwozero.iksu.network.WorkoutMoshiAdapter;
@@ -44,12 +46,18 @@ public class IksuApp extends Application {
         applicationContext = this;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(IksuApp.getContext());
 
-        if (!TextUtils.isEmpty(sharedPreferences.getString(Constants.CURRENT_USER, ""))) {
-            final UserAccount userAccount = Realm.getDefaultInstance().where(UserAccount.class).equalTo(Constants.USERNAME, sharedPreferences.getString(Constants.CURRENT_USER, "")).findFirst();
+        final String currentUsername = sharedPreferences.getString(Constants.CURRENT_USER, "");
+        if (!TextUtils.isEmpty(currentUsername)) {
+            final UserAccount userAccount = Realm.getDefaultInstance().where(UserAccount.class).equalTo(Constants.USERNAME, currentUsername).findFirst();
             if (userAccount == null) {
                 sharedPreferences.edit().remove(Constants.CURRENT_USER).apply();
             } else {
                 IksuApp.activeAccount = Realm.getDefaultInstance().copyFromRealm(userAccount);
+                if (IksuApp.activeAccount != null && !IksuApp.activeAccount.isDisabled()) {
+                    IksuApp.activeAccount = null;
+                    Toast.makeText(getContext(), getString(R.string.msg_account_disabled, currentUsername), Toast.LENGTH_LONG).show();
+                    sharedPreferences.edit().remove(Constants.CURRENT_USER).apply();
+                }
             }
 
         }
