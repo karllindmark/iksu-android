@@ -33,6 +33,10 @@ import com.ninetwozero.iksu.utils.Constants;
 import butterknife.BindView;
 
 import static com.ninetwozero.iksu.network.IksuLoginService.ACTION_LOGIN;
+import static com.ninetwozero.iksu.network.LoginHelper.RESULT_ERROR;
+import static com.ninetwozero.iksu.network.LoginHelper.RESULT_FAIL;
+import static com.ninetwozero.iksu.network.LoginHelper.RESULT_FAIL_BLOCKED;
+import static com.ninetwozero.iksu.network.LoginHelper.RESULT_FAIL_CREDENTIALS;
 
 public class LoginActivity extends BaseSecondaryActivity implements BaseActivity.LoginCallback {
     public static final String USERNAME = "username";
@@ -74,10 +78,10 @@ public class LoginActivity extends BaseSecondaryActivity implements BaseActivity
     }
 
     @Override
-    public void onLoginStateChanged(final boolean loggedIn) {
+    public void onLoginStateChanged(final boolean loggedIn, final int status) {
         if (!loggedIn) {
             passwordField.requestFocus();
-            Snackbar.make(findViewById(android.R.id.content), R.string.msg_login_error, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(android.R.id.content), getErrorMessageForLoginStatus(status), Snackbar.LENGTH_SHORT).show();
             setUiState(STATE_FORM);
             return;
         }
@@ -90,6 +94,19 @@ public class LoginActivity extends BaseSecondaryActivity implements BaseActivity
         extras.putBoolean(STATUS, true);
         setResult(Activity.RESULT_OK, new Intent().putExtras(extras));
         finish();
+    }
+
+    private int getErrorMessageForLoginStatus(int status) {
+        switch (status) {
+            case RESULT_FAIL_CREDENTIALS:
+                return R.string.msg_login_error;
+            case RESULT_FAIL_BLOCKED:
+                return R.string.msg_login_error_blocked;
+            case RESULT_FAIL:
+            case RESULT_ERROR:
+            default:
+                return R.string.msg_sign_in_failed;
+        }
     }
 
     @Override

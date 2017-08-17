@@ -19,8 +19,10 @@ import retrofit2.Response;
 
 public class LoginHelper {
     public static final int RESULT_OK = 0;
-    private static final int RESULT_FAIL = 1;
-    private static final int RESULT_ERROR = 2;
+    public static final int RESULT_FAIL = 1;
+    public static final int RESULT_ERROR = 2;
+    public static final int RESULT_FAIL_CREDENTIALS = 3;
+    public static final int RESULT_FAIL_BLOCKED = 4;
 
     private final Context context;
 
@@ -29,6 +31,8 @@ public class LoginHelper {
     }
 
     public int doLogin(final String username, final String encryptedPassword) {
+        int out = RESULT_FAIL;
+
         final LoginUtil loginUtil = new LoginUtil(context, PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.KEY_UUID, ""));
         try {
             final Response<LoginResponse> response = IksuApp.getApi().login(username, loginUtil.decryptPassword(encryptedPassword)).execute();
@@ -63,14 +67,29 @@ public class LoginHelper {
 
                     IksuApp.setActiveUser(userAccount);
                     realm.close();
-                    return RESULT_OK;
+                    out = RESULT_OK;
                 }
+            } else if (response.code() == 412) {
+                ApiErrorResponse errorResponse = IksuApp.getMoshi().adapter(ApiErrorResponse.class).fromJson(response.errorBody().string());
+                if (errorResponse != null) {
+                    switch (errorResponse.getMessage()) {
+                        case "1024":
+                            out = RESULT_FAIL_CREDENTIALS;
+                            break;
+                        case "2048":
+                            out = RESULT_FAIL_BLOCKED;
+                            break;
+                        default:
+                            out = RESULT_FAIL;
+                            break;
+                    }
+                }
+                IksuApp.setActiveUser(null);
             }
-            IksuApp.setActiveUser(null);
-            return RESULT_FAIL;
         } catch (IOException e) {
             FirebaseCrash.report(e);
-            return RESULT_ERROR;
+            out = RESULT_ERROR;
         }
+        return out;
     }
 }
