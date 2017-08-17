@@ -101,4 +101,5 @@
     <string name="msg_workout_not_found">Passet kunde inte hittas</string>
     <string name="label_share">Dela</string>
     <string name="msg_login_error_blocked">Ditt IKSU-konto verkar har blivit låst.</string>
+    <string name="msg_account_disabled">Kontot \'%1$s\' har avaktiverats</string>
 </resources>
