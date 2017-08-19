@@ -53,7 +53,7 @@ public class IksuApp extends Application {
                 sharedPreferences.edit().remove(Constants.CURRENT_USER).apply();
             } else {
                 IksuApp.activeAccount = Realm.getDefaultInstance().copyFromRealm(userAccount);
-                if (IksuApp.activeAccount != null && !IksuApp.activeAccount.isDisabled()) {
+                if (IksuApp.activeAccount != null && IksuApp.activeAccount.isDisabled()) {
                     IksuApp.activeAccount = null;
                     Toast.makeText(getContext(), getString(R.string.msg_account_disabled, currentUsername), Toast.LENGTH_LONG).show();
                     sharedPreferences.edit().remove(Constants.CURRENT_USER).apply();
