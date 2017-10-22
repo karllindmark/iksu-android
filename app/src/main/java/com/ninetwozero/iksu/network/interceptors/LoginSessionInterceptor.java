@@ -4,6 +4,7 @@ import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.models.ApiSession;
 import com.ninetwozero.iksu.models.UserAccount;
 import com.ninetwozero.iksu.network.LoginHelper;
+import com.ninetwozero.iksu.network.dto.GeneralApiErrorResponse;
 import com.ninetwozero.iksu.utils.ApiHelper;
 import com.ninetwozero.iksu.utils.Constants;
 import com.squareup.moshi.JsonDataException;
@@ -27,33 +28,41 @@ public class LoginSessionInterceptor implements Interceptor {
         if (IksuApp.hasSelectedAccount() && !request.url().encodedPath().endsWith("/login")) {
             final Response response = chain.proceed(request);
             boolean responseIsErrorObject = false;
+            GeneralApiErrorResponse errorObject = null;
             try {
-                responseIsErrorObject = response.peekBody(20).string().matches("\\{\"(Message|message)\":\"([^\"]+)\"\\}");
+                responseIsErrorObject = response.peekBody(20).string().matches("\\{\"(Message|message)\":\"([^\"]+)\".*");
+                if (responseIsErrorObject) {
+                    errorObject = IksuApp.getMoshi().adapter(GeneralApiErrorResponse.class).fromJson(
+                        response.peekBody(Integer.parseInt(response.header("Content-Length"))).source()
+                    );
+                }
             } catch (JsonDataException ignored) {}
 
             if (responseIsErrorObject) {
                 final Realm realm = Realm.getDefaultInstance();
-                UserAccount account = realm.where(UserAccount.class).equalTo(Constants.USERNAME, IksuApp.getActiveUsername()).findFirst();
-                if (account != null) {
-                    final String oldSessionId = account.getSessionId();
-                    int status = new LoginHelper(IksuApp.getContext()).doLogin(account.getUsername(), account.getPassword());
-                    if (status == LoginHelper.RESULT_OK) {
-                        switch (request.method()) {
-                            case "PUT": // No known PUTs at this time though
-                            case "POST":
-                                request = handlePostInterception(request, IksuApp.getActiveAccount().getSessionId());
-                                break;
-                            case "DELETE":
-                            case "GET":
-                            default:
-                                request = handleInterceptionWhenDataInUrl(request, oldSessionId, IksuApp.getActiveAccount().getSessionId());
-                                break;
+                if ("UserNotLoggedIn".equals(errorObject.getErrorKey())) {
+                    UserAccount account = realm.where(UserAccount.class).equalTo(Constants.USERNAME, IksuApp.getActiveUsername()).findFirst();
+                    if (account != null) {
+                        final String oldSessionId = account.getSessionId();
+                        int status = new LoginHelper(IksuApp.getContext()).doLogin(account.getUsername(), account.getPassword());
+                        if (status == LoginHelper.RESULT_OK) {
+                            switch (request.method()) {
+                                case "PUT": // No known PUTs at this time though
+                                case "POST":
+                                    request = handlePostInterception(request, IksuApp.getActiveAccount().getSessionId());
+                                    break;
+                                case "DELETE":
+                                case "GET":
+                                default:
+                                    request = handleInterceptionWhenDataInUrl(request, oldSessionId, IksuApp.getActiveAccount().getSessionId());
+                                    break;
+                            }
+                        } else {
+                            realm.beginTransaction();
+                            realm.where(ApiSession.class).equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername()).findAll().deleteAllFromRealm();
+                            account.setDisabled(true);
+                            realm.commitTransaction();
                         }
-                    } else {
-                        realm.beginTransaction();
-                        realm.where(ApiSession.class).equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername()).findAll().deleteAllFromRealm();
-                        account.setDisabled(true);
-                        realm.commitTransaction();
                     }
                 }
                 realm.close();
