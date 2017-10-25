@@ -30,4 +30,13 @@ public class GeneralApiErrorResponse {
     public void setErrorString(String errorString) {
         this.errorString = errorString;
     }
+
+    @Override
+    public String toString() {
+        return "GeneralApiErrorResponse{" +
+            "errorCode='" + errorCode + '\'' +
+            ", errorKey='" + errorKey + '\'' +
+            ", errorString='" + errorString + '\'' +
+            '}';
+    }
 }

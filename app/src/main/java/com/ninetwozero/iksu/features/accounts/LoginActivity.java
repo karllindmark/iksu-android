@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -228,14 +229,22 @@ public class LoginActivity extends BaseSecondaryActivity implements BaseActivity
         View topMostFaultyView = null;
         boolean hasErrors = false;
 
+        final String username = usernameField.getText().toString();
         final String password = passwordField.getText().toString();
+
+        if (username.equals("developer") && password.equals("")) {
+            IksuApp.activateDeveloperMode();
+            Toast.makeText(getApplicationContext(), R.string.msg_activating_devmode, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         if (TextUtils.isEmpty(password)) {
             topMostFaultyView = passwordField;
             passwordField.setError(getString(R.string.msg_error_invalid_password));
             hasErrors = true;
         }
 
-        final String username = usernameField.getText().toString();
         if (TextUtils.isEmpty(username)) {
             usernameField.setError(getString(R.string.msg_error_empty_username));
             topMostFaultyView = usernameField;

@@ -27,6 +27,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+import static com.ninetwozero.iksu.utils.Constants.DEVELOPER_MODE;
 import static com.ninetwozero.iksu.utils.Constants.KEY_UUID;
 
 public class IksuApp extends Application {
@@ -37,6 +38,8 @@ public class IksuApp extends Application {
     private static SharedPreferences sharedPreferences;
     private static UserAccount activeAccount;
 
+    private static boolean developerMode;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -45,6 +48,7 @@ public class IksuApp extends Application {
 
         applicationContext = this;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(IksuApp.getContext());
+        developerMode = sharedPreferences.getBoolean(Constants.DEVELOPER_MODE, false);
 
         final String currentUsername = sharedPreferences.getString(Constants.CURRENT_USER, "");
         if (!TextUtils.isEmpty(currentUsername)) {
@@ -137,5 +141,14 @@ public class IksuApp extends Application {
 
     public static String getLatestRefreshKey() {
         return Constants.LATEST_AUTO_REFRESH + (IksuApp.hasSelectedAccount() ? "_" + IksuApp.getActiveUsername() : "");
+    }
+
+    public static boolean hasEnabledDeveloperMode() {
+        return developerMode;
+    }
+
+    public static void activateDeveloperMode() {
+        developerMode = true;
+        sharedPreferences.edit().putBoolean(DEVELOPER_MODE, true).apply();
     }
 }

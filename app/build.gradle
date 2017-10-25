@@ -21,7 +21,7 @@ android {
         applicationId "com.ninetwozero.iksu"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 9
+        versionCode 10
         versionName "1.0.3 (ABDOMINAL)"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

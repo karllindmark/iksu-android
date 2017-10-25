@@ -33,4 +33,5 @@ public class Constants {
     public static final String LOCATION_IKSU_PLUS = "facility_plus";
 
     public static final String RATE_APP = "RATE_APP";
+    public static final String DEVELOPER_MODE = "has_activated_developer_mode";
 }

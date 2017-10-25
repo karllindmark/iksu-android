@@ -29,12 +29,15 @@ import com.ninetwozero.iksu.features.accounts.LoginActivity;
 import com.ninetwozero.iksu.features.accounts.ManageAccountsActivity;
 import com.ninetwozero.iksu.features.schedule.listing.WeeklyScheduleFragment;
 import com.ninetwozero.iksu.features.schedule.reservation.ReservationTabFragment;
+import com.ninetwozero.iksu.models.ApiSession;
 import com.ninetwozero.iksu.models.UserAccount;
 import com.ninetwozero.iksu.network.IksuLoginService;
 import com.ninetwozero.iksu.network.IksuWorkoutService;
 import com.ninetwozero.iksu.utils.ApiHelper;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.DensityUtils;
+
+import java.util.UUID;
 
 import butterknife.BindView;
 import io.realm.Realm;
@@ -161,9 +164,25 @@ public class MainActivity extends BaseActivity {
                     }, 300);
                     return false;
                 }
+
+                if (item.getItemId() == R.id.kill_session && IksuApp.hasEnabledDeveloperMode()) {
+                    Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(final Realm realm) {
+                            final UserAccount tempAccount = realm.where(UserAccount.class).equalTo("username", IksuApp.getActiveUsername()).findFirst();
+                            tempAccount.getSession().deleteFromRealm();
+
+                            final ApiSession fakeSession = realm.createObject(ApiSession.class, UUID.randomUUID().toString());
+                            tempAccount.setSession(fakeSession);
+                            realm.insertOrUpdate(tempAccount);
+                        }
+                    });
+                    return false;
+                }
                 return goToFeature(item.getItemId(), true);
             }
         });
+        navigationView.getMenu().findItem(R.id.kill_session).setVisible(IksuApp.hasSelectedAccount() && IksuApp.hasEnabledDeveloperMode());
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.dummy_name, R.string.dummy_email) {
             public void onDrawerClosed(View view) {
@@ -330,6 +349,10 @@ public class MainActivity extends BaseActivity {
 
         if (!IksuApp.hasSelectedAccount()) {
             menu.findItem(R.id.menu_reservations).setVisible(false);
+        }
+
+        if (!IksuApp.hasEnabledDeveloperMode()) {
+            menu.findItem(R.id.kill_session).setVisible(false);
         }
         navHeaderDropdownIndicator.animate().rotation(show ? -180f : 0f);
     }
