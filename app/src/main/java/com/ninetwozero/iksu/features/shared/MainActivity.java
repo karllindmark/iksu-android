@@ -27,6 +27,7 @@ import com.ninetwozero.iksu.common.ui.BaseActivity;
 import com.ninetwozero.iksu.features.about.AboutActivity;
 import com.ninetwozero.iksu.features.accounts.LoginActivity;
 import com.ninetwozero.iksu.features.accounts.ManageAccountsActivity;
+import com.ninetwozero.iksu.features.debug.DebugActivity;
 import com.ninetwozero.iksu.features.schedule.listing.WeeklyScheduleFragment;
 import com.ninetwozero.iksu.features.schedule.reservation.ReservationTabFragment;
 import com.ninetwozero.iksu.models.ApiSession;
@@ -308,7 +309,10 @@ public class MainActivity extends BaseActivity {
 
             case R.id.menu_about:
                 intent = new Intent(getApplicationContext(), AboutActivity.class);
-                requestId = AboutActivity.REQUEST;
+                break;
+
+            case R.id.menu_debug:
+                intent = new Intent(getApplicationContext(), DebugActivity.class);
                 break;
 
             case R.id.add_account:
@@ -325,6 +329,7 @@ public class MainActivity extends BaseActivity {
 
             default:
                 Toast.makeText(getApplicationContext(), getResources().getResourceName(menuItemId), Toast.LENGTH_SHORT).show();
+                break;
         }
 
         if (fragment != null) {
@@ -335,7 +340,11 @@ public class MainActivity extends BaseActivity {
         }
 
         if (intent != null) {
-            startActivityForResult(intent, requestId);
+            if (requestId > 0) {
+                startActivityForResult(intent, requestId);
+            } else {
+                startActivity(intent);
+            }
         }
         return false;
     }
@@ -353,6 +362,7 @@ public class MainActivity extends BaseActivity {
 
         if (!IksuApp.hasEnabledDeveloperMode()) {
             menu.findItem(R.id.kill_session).setVisible(false);
+            menu.findItem(R.id.menu_debug).setVisible(false);
         }
         navHeaderDropdownIndicator.animate().rotation(show ? -180f : 0f);
     }

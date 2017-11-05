@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+>
+    <item
+        android:id="@+id/menu_reset_api_token"
+        android:title="@string/label_debug_reset_token"
+        android:icon="@drawable/ic_remove_circle_black_24dp"
+        app:showAsAction="withText"
+        />
+</menu>

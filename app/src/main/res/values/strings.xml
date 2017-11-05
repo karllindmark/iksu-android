@@ -127,4 +127,6 @@
     <string name="x_by_y">%1$s by %2$s</string>
     <string name="msg_account_disabled">Account \'%1$s\' has been disabled</string>
     <string name="msg_activating_devmode">Activating developer mode</string>
+    <string name="label_debug">Debug</string>
+    <string name="label_debug_reset_token">Reset API token</string>
 </resources>

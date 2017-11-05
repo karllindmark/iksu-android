@@ -15,13 +15,13 @@ project.ext.iksu = [
 loadExtraProperties("credentials.properties")
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
     defaultConfig {
         applicationId "com.ninetwozero.iksu"
         minSdkVersion 21
-        targetSdkVersion 25
-        versionCode 10
+        targetSdkVersion 27
+        versionCode 11
         versionName "1.0.3 (ABDOMINAL)"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -61,10 +61,10 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:appcompat-v7:27.0.0'
+    compile 'com.android.support:design:27.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:preference-v14:25.3.1'
+    compile 'com.android.support:preference-v14:27.0.0'
 
     compile 'com.afollestad.material-dialogs:core:0.9.4.3'
     compile 'de.hdodenhof:circleimageview:2.1.0'

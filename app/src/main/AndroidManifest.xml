@@ -92,6 +92,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".features.debug.DebugActivity"
+            android:theme="@style/StandardActivity.NoActionBar"
+            android:parentActivityName=".features.shared.MainActivity"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.shared.MainActivity"/>
+        </activity>
+
         <service
             android:name=".network.IksuWorkoutService"
             android:exported="false"/>

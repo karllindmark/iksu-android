@@ -104,4 +104,6 @@
     <string name="msg_account_disabled">Kontot \'%1$s\' har avaktiverats</string>
     <string name="label_kill_session">Logga ut lite halverst</string>
     <string name="msg_activating_devmode">Aktiverar utvecklarläget</string>
+    <string name="label_debug">Felsökning</string>
+    <string name="label_debug_reset_token">Nollställ API-nyckel</string>
 </resources>

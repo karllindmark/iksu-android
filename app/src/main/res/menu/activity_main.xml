@@ -19,6 +19,12 @@
             android:title="@string/label_about"
             android:icon="@drawable/ic_info_black_24dp"
             />
+        <item
+            android:id="@+id/menu_debug"
+            android:title="@string/label_debug"
+            android:icon="@drawable/ic_hot_tub_black_24dp"
+            android:visible="false"
+        />
     </group>
     <group android:id="@+id/account_list" android:checkableBehavior="single" android:visible="false" android:orderInCategory="0" android:menuCategory="alternative">
     </group>
@@ -33,6 +39,7 @@
             android:title="@string/label_manage_accounts"
             android:icon="@drawable/ic_settings_black_24dp"
             />
+
         <item
             android:id="@+id/kill_session"
             android:title="@string/label_kill_session"
