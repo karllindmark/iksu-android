@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.ninetwozero.iksu.BR;
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.models.UserAccount;
@@ -86,8 +87,8 @@ public class AccountListAdapter extends RealmRecyclerViewAdapter<UserAccount, Ac
 
         void bind(final UserAccount userAccount) {
             Glide.with(this.binding.getRoot().getContext())
+                .applyDefaultRequestOptions(new RequestOptions().fallback(R.drawable.ic_account_circle_black_24dp))
                 .load(ApiHelper.buildGravatarUrl(userAccount.getUsername(), avatarSize))
-                .error(R.drawable.ic_account_circle_black_24dp)
                 .into(this.avatarView);
 
             this.binding.setVariable(BR.account, userAccount);

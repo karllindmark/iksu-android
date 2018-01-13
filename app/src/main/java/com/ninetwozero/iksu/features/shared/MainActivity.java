@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.request.RequestOptions;
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.common.ui.BaseActivity;
@@ -258,11 +260,12 @@ public class MainActivity extends BaseActivity {
     private void updateAccountBox() {
         if (IksuApp.hasSelectedAccount()) {
             int size = DensityUtils.toPixels(getResources().getDimension(R.dimen.navigation_drawer_main_avatar_size));
+
             Glide.with(this)
+                .applyDefaultRequestOptions(new RequestOptions().fallback(R.drawable.ic_account_circle_black_24dp))
                 .load(ApiHelper.buildGravatarUrl(IksuApp.getActiveAccount().getUsername(), size))
-                .fallback(R.drawable.ic_account_circle_black_24dp)
-                .error(R.drawable.ic_account_circle_black_24dp)
                 .into(navHeaderAvatarView);
+
             navHeaderNameView.setText(IksuApp.getActiveAccount().getName());
             navHeaderUsernameView.setText(IksuApp.getActiveAccount().getUsername());
             navHeaderDropdownIndicator.setVisibility(View.VISIBLE);
