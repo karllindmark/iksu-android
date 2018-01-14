@@ -103,7 +103,7 @@ abstract public class BaseFilterFragment extends BaseListFragment<ScheduleFilter
         return new FilterListCallbacks() {
             @Override
             public void onFilterClick(final View view, final ScheduleFilterItem filter) {
-                final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+                final CheckBox checkBox = view.findViewById(R.id.checkbox);
                 final boolean checked = !checkBox.isChecked();
                 checkBox.setChecked(checked);
                 filter.setEnabled(checked);

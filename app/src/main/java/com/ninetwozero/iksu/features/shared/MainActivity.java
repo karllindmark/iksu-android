@@ -251,9 +251,9 @@ public class MainActivity extends BaseActivity {
     // FIXME: Can we ButterKnife these in some way?
     private void findAllViews() {
         navHeaderView = navigationView.getHeaderView(0);
-        navHeaderAvatarView = (ImageView) navHeaderView.findViewById(R.id.avatar);
-        navHeaderNameView = (TextView) navHeaderView.findViewById(R.id.name);
-        navHeaderUsernameView = (TextView) navHeaderView.findViewById(R.id.username);
+        navHeaderAvatarView = navHeaderView.findViewById(R.id.avatar);
+        navHeaderNameView = navHeaderView.findViewById(R.id.name);
+        navHeaderUsernameView = navHeaderView.findViewById(R.id.username);
         navHeaderDropdownIndicator = navHeaderView.findViewById(R.id.indicator);
     }
 
