@@ -297,8 +297,8 @@
             </android.support.v4.widget.NestedScrollView>
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <!-- TODO: Animate this into view in "onViewCreated" or something -->
         <FrameLayout
+            android:id="@+id/wrap_event_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
