@@ -123,23 +123,6 @@
                         >
 
                         <TextView
-                            android:id="@+id/slots"
-                            style="@style/TextAppearance.AppCompat"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:text="@{workout.bookedSlotCount + `/` + workout.totalSlotCount}"
-                            android:textColor="@android:color/white"
-
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-
-                            tools:text="32/33"
-                            />
-
-
-                        <TextView
                             android:id="@+id/time"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -187,6 +170,46 @@
                             tools:layout_editor_absoluteX="0dp"
                             tools:text="Moskva, IKSU Sport"
                             />
+
+                        <TextView
+                            android:id="@+id/slots"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="@{workout.bookedSlotCount + `/` + workout.totalSlotCount}"
+                            android:textColor="@android:color/white"
+                            android:backgroundTint="@{statusTint}"
+
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@id/location"
+                            app:layout_constraintTop_toTopOf="@id/time"
+
+                            tools:backgroundTint="@color/class_state_gte80"
+                            tools:text="32/33"
+                            />
+
+
+                        <Button
+                            style="@style/Widget.AppCompat.Button.Colored"
+                            android:id="@+id/event_action"
+                            android:layout_width="match_parent"
+                            android:layout_height="?android:attr/actionBarSize"
+
+                            android:backgroundTint="@{statusTint}"
+                            android:text="@{actionStringRes}"
+
+                            android:onClick="@{(view) -> handler.onBookingButtonClick(view, workout)}"
+                            android:layout_marginTop="@dimen/spacing_double"
+                            android:layout_marginBottom="@dimen/spacing_double"
+
+                            app:layout_constraintTop_toBottomOf="@id/location"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+
+                            tools:text="@string/label_reserve"
+                            tools:backgroundTint="@color/class_state_gte80"
+                        />
+
                     </android.support.constraint.ConstraintLayout>
 
                     <TextView
@@ -296,41 +319,5 @@
                 </android.support.constraint.ConstraintLayout>
             </android.support.v4.widget.NestedScrollView>
         </android.support.v4.widget.SwipeRefreshLayout>
-
-        <FrameLayout
-            android:id="@+id/wrap_event_action"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="@{(view) -> handler.onBookingButtonClick(view, workout)}"
-
-            android:layout_gravity="bottom"
-            app:layout_anchorGravity="bottom"
-            app:layout_anchor="@id/nested_container"
-            app:layout_scrollFlags="scroll|enterAlways"
-
-            tools:background="@color/tools_hitbox_color"
-        >
-
-            <Button
-                android:id="@+id/event_action"
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-
-                android:backgroundTint="@{statusTint}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
-                android:text="@{actionStringRes}"
-
-                android:clickable="false"
-                android:gravity="center"
-                android:duplicateParentState="true"
-
-                android:layout_margin="@dimen/spacing_double"
-
-                tools:text="@string/label_reserve"
-                tools:backgroundTint="@color/class_state_lt60"
-            />
-        </FrameLayout>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

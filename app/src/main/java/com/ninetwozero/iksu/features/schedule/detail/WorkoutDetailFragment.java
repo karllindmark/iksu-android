@@ -72,9 +72,6 @@ public class WorkoutDetailFragment extends BaseFragment {
     protected RecyclerView upcomingClassesList;
     @BindView(R.id.upcoming_classes_empty)
     protected View upcomingClassesEmptyView;
-
-    @BindView(R.id.wrap_event_action)
-    protected View callToActionHitbox;
     @BindView(R.id.event_action)
     protected Button callToAction;
 
@@ -133,7 +130,6 @@ public class WorkoutDetailFragment extends BaseFragment {
 
         setupSimilarClassesView();
         setupSwipeRefreshLayout();
-        setupScrollingContainer();
     }
 
     @Override
@@ -198,31 +194,6 @@ public class WorkoutDetailFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 getActivity().startService(IksuWorkoutService.newIntent(getActivity(), IksuWorkoutService.ACTION, workoutId));
-            }
-        });
-    }
-
-    private void setupScrollingContainer() {
-        scrollingContainer.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            private static final int STATE_NORMAL = 0;
-            private static final int STATE_UP = 1;
-            private static final int STATE_DOWN = 2;
-
-            private int state = STATE_NORMAL;
-
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY > oldScrollY) {
-                    if (state != STATE_DOWN) {
-                        state = STATE_DOWN;
-                        callToActionHitbox.animate().y(getView().getMeasuredHeight()).start();
-                    }
-                } else if (scrollY < oldScrollY){
-                    if (state != STATE_UP) {
-                        state = STATE_UP;
-                        callToActionHitbox.animate().y(getView().getMeasuredHeight()-callToActionHitbox.getMeasuredHeight()).start();
-                    }
-                }
             }
         });
     }

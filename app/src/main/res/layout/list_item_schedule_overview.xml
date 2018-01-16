@@ -84,19 +84,14 @@
             />
 
         <TextView
+            style="@style/ColoredBadge"
             android:id="@+id/slots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/chip_background"
             android:backgroundTint="@{statusTint}"
             android:text="@{actionStringRes}"
             tools:text="32/33"
-            android:textColor="#ddffffff"
-            android:textSize="13sp"
             android:minEms="3"
-            android:gravity="center_vertical|center_horizontal"
-            android:textAllCaps="true"
-            android:foreground="?android:attr/selectableItemBackground"
             android:visibility="@{inactive ? View.INVISIBLE : View.VISIBLE}"
 
             app:layout_constraintTop_toTopOf="parent"
