@@ -64,7 +64,7 @@ public class WorkoutListAdapter extends RealmRecyclerViewAdapter<Workout, Workou
             this.binding.setVariable(BR.workout, workout);
             this.binding.setVariable(BR.statusTint, ContextCompat.getColor(context, workoutUiHelper.getColorForStatusBadge(workout)));
             this.binding.setVariable(BR.inactive, System.currentTimeMillis() > workout.getStartDate());
-            this.binding.setVariable(BR.actionText, workoutUiHelper.getActionTextForWorkout(context, workout));
+            this.binding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(context, workout));
             this.binding.executePendingBindings();
         }
     }

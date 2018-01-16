@@ -81,8 +81,8 @@ public class ReservationListAdapter extends RecyclerView.Adapter<ReservationList
             }
 
             private void bindReservationRow(Workout reservation) {
+                binding.setVariable(com.ninetwozero.iksu.BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(context, reservation));
                 binding.setVariable(com.ninetwozero.iksu.BR.statusTint, ContextCompat.getColor(context, workoutUiHelper.getColorForStatusBadge(reservation)));
-                binding.setVariable(com.ninetwozero.iksu.BR.actionText, workoutUiHelper.getActionTextForWorkout(context, reservation));
                 binding.setVariable(BR.workout, reservation);
             }
         }

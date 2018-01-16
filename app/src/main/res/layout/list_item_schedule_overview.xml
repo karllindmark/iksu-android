@@ -6,7 +6,7 @@
         <variable name="handler" type="com.ninetwozero.iksu.features.schedule.listing.WorkoutListCallbacks" />
         <variable name="workout" type="com.ninetwozero.iksu.models.Workout" />
         <variable name="inactive" type="boolean" />
-        <variable name="actionText" type="String" />
+        <variable name="actionStringRes" type="String" />
         <variable name="statusTint" type="int" />
     </data>
 
@@ -83,46 +83,40 @@
             tools:text="25"
             />
 
-
-        <FrameLayout
-            android:id="@+id/wrap_status"
+        <TextView
+            android:id="@+id/slots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:background="@drawable/chip_background"
+            android:backgroundTint="@{statusTint}"
+            android:text="@{actionStringRes}"
+            tools:text="32/33"
+            android:textColor="#ddffffff"
+            android:textSize="13sp"
+            android:minEms="3"
+            android:gravity="center_vertical|center_horizontal"
+            android:textAllCaps="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:visibility="@{inactive ? View.INVISIBLE : View.VISIBLE}"
+
             app:layout_constraintTop_toTopOf="parent"
-            android:transitionName="@string/transition_workout_status"
-        >
-                <TextView
-                    android:id="@+id/slots"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/chip_background"
-                    android:backgroundTint="@{statusTint}"
-                    android:text="@{actionText}"
-                    tools:text="32/33"
-                    android:textColor="#ddffffff"
-                    android:textSize="13sp"
-                    android:minEms="3"
-                    android:gravity="center_horizontal"
-                    android:textAllCaps="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:visibility="@{inactive ? View.GONE : View.VISIBLE}"
-                    />
-                <ImageView
-                    android:id="@+id/status_icon"
-                    android:layout_width="@dimen/schedule_detail_fragment_action_size"
-                    android:layout_height="@dimen/schedule_detail_fragment_action_size"
-                    app:srcCompat="@drawable/ic_info_black_24dp"
-                    android:tint="#CCCCCC"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:contentDescription="@string/cdesc_status_icon"
-                    android:visibility="@{inactive ? View.VISIBLE : View.GONE}"
-                    android:layout_gravity="end"
-                    />
-        </FrameLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+        />
+
+        <ImageView
+            android:id="@+id/status_icon"
+            android:layout_width="@dimen/schedule_detail_fragment_action_size"
+            android:layout_height="@dimen/schedule_detail_fragment_action_size"
+            app:srcCompat="@drawable/ic_info_black_24dp"
+            android:tint="#CCCCCC"
+            android:contentDescription="@string/cdesc_status_icon"
+            android:visibility="@{inactive ? View.VISIBLE : View.GONE}"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
         <TextView
             style="@style/NormalListTitle"
@@ -133,13 +127,13 @@
 
             app:layout_constraintStart_toStartOf="@id/guideline_72"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/wrap_status"
+            app:layout_constraintEnd_toStartOf="@id/slots"
             app:layout_constraintVertical_chainStyle="packed"
 
             android:layout_marginEnd="@dimen/spacing_double"
-            android:transitionName="@string/transition_workout_title"
 
-            tools:text="Total Training" />
+            tools:text="Total Training"
+        />
 
         <TextView
             style="@style/NormalListText"

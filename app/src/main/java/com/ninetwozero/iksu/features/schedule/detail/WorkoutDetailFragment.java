@@ -114,6 +114,7 @@ public class WorkoutDetailFragment extends BaseFragment {
         viewbinding.setVariable(BR.workout, workout);
         viewbinding.setVariable(BR.handler, scheduleHandler);
         viewbinding.setVariable(BR.helper, workoutUiHelper);
+        viewbinding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(getContext(), workout, false));
         viewbinding.setVariable(BR.statusTint, ContextCompat.getColor(getContext(), workoutUiHelper.getColorForStatusBadge(workout)));
         viewbinding.executePendingBindings();
 
@@ -124,7 +125,6 @@ public class WorkoutDetailFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        callToAction.setText(workoutUiHelper.getActionTextForWorkout(getContext(), workout, true));
         setupSimilarClassesView();
         setupSwipeRefreshLayout();
     }
@@ -255,10 +255,10 @@ public class WorkoutDetailFragment extends BaseFragment {
 
     private void onWorkoutChangedCallback(final Workout updatedWorkout) {
         viewbinding.setVariable(BR.workout, updatedWorkout);
+        viewbinding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(getContext(), updatedWorkout, false));
         viewbinding.setVariable(BR.statusTint, ContextCompat.getColor(getContext(), workoutUiHelper.getColorForStatusBadge(updatedWorkout)));
         viewbinding.executePendingBindings();
 
-        callToAction.setText(workoutUiHelper.getActionTextForWorkout(getContext(), updatedWorkout, true));
         swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -338,8 +338,7 @@ public class WorkoutDetailFragment extends BaseFragment {
             intent.putExtra(WorkoutDetailFragment.WORKOUT_ID, workout.getId());
             intent.putExtra(WorkoutDetailFragment.WORKOUT_TITLE, workout.getTitle());
 
-            final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.wrap_status), getString(R.string.transition_workout_status));
-            startActivity(intent, options.toBundle());
+            startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity()).toBundle());
         }
     }
 

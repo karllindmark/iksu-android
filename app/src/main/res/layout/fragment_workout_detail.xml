@@ -1,299 +1,336 @@
 <layout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools"
-  >
-
-  <data>
-    <import type="android.view.View" />
-    <variable name="workout" type="com.ninetwozero.iksu.models.Workout" />
-    <variable name="helper" type="com.ninetwozero.iksu.features.schedule.shared.WorkoutUiHelper" />
-    <variable name="handler" type="com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment.ScheduleDetailHandler" />
-    <variable name="statusTint" type="int" />
-  </data>
-
-  <android.support.design.widget.CoordinatorLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     >
 
-    <android.support.design.widget.AppBarLayout
-      android:id="@+id/appbar"
-      android:layout_width="match_parent"
-      android:layout_height="?attr/actionBarSize"
-      android:fitsSystemWindows="true"
-      android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-      >
+    <data>
 
-      <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:titleTextColor="@color/white"
-        app:subtitleTextColor="#DDFFFFFF"
-        />
-    </android.support.design.widget.AppBarLayout>
+        <import type="android.view.View"/>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-      android:id="@+id/swipeRefreshLayout"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    >
-    <android.support.v4.widget.NestedScrollView
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:clipToPadding="false"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior"
-      >
+        <variable name="workout" type="com.ninetwozero.iksu.models.Workout"/>
+        <variable name="helper" type="com.ninetwozero.iksu.features.schedule.shared.WorkoutUiHelper"/>
+        <variable name="handler" type="com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment.ScheduleDetailHandler"/>
+        <variable name="actionStringRes" type="String" />
+        <variable name="statusTint" type="int" />
+    </data>
 
-      <android.support.constraint.ConstraintLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
 
-        <android.support.constraint.Guideline
-          android:id="@+id/horizontal_center_guideline"
-          android:layout_width="1dp"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          app:layout_constraintGuide_percent="0.5"
-          tools:layout_editor_absoluteX="192dp"
-          tools:layout_editor_absoluteY="81dp"
-          />
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            >
 
-        <android.support.constraint.Guideline
-          android:id="@+id/vertical_top_guideline"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          app:layout_constraintGuide_begin="@dimen/spacing_double"
-          tools:layout_editor_absoluteX="0dp"
-          tools:layout_editor_absoluteY="97dp"
-          />
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:subtitleTextColor="#DDFFFFFF"
+                app:titleTextColor="@color/white"
+                />
+        </android.support.design.widget.AppBarLayout>
 
-        <android.support.constraint.Guideline
-          android:id="@+id/horizontal_left_guideline"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          app:layout_constraintGuide_begin="@dimen/spacing_double"
-          tools:layout_editor_absoluteX="16dp"
-          tools:layout_editor_absoluteY="81dp"
-          />
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
 
-        <android.support.constraint.Guideline
-          android:id="@+id/horizontal_right_guideline"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          app:layout_constraintGuide_end="@dimen/spacing_double"
-          tools:layout_editor_absoluteX="368dp"
-          tools:layout_editor_absoluteY="81dp"
-          />
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/nested_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                >
 
-        <android.support.constraint.Guideline
-          android:id="@+id/vertical_bottom_guideline"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          app:layout_constraintGuide_end="@dimen/spacing_double"
-          tools:layout_editor_absoluteX="0dp"
-          tools:layout_editor_absoluteY="989dp"
-          />
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/wrap_current"
-            android:layout_width="0dp"
+                    <android.support.constraint.Guideline
+                        android:id="@+id/horizontal_center_guideline"
+                        android:layout_width="1dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5"
+                        tools:layout_editor_absoluteX="192dp"
+                        tools:layout_editor_absoluteY="81dp"
+                        />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/vertical_top_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_begin="@dimen/spacing_double"
+                        tools:layout_editor_absoluteX="0dp"
+                        tools:layout_editor_absoluteY="97dp"
+                        />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/horizontal_left_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="@dimen/spacing_double"
+                        tools:layout_editor_absoluteX="16dp"
+                        tools:layout_editor_absoluteY="81dp"
+                        />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/horizontal_right_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_end="@dimen/spacing_double"
+                        tools:layout_editor_absoluteX="368dp"
+                        tools:layout_editor_absoluteY="81dp"
+                        />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/vertical_bottom_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_end="@dimen/spacing_double"
+                        tools:layout_editor_absoluteX="0dp"
+                        tools:layout_editor_absoluteY="989dp"
+                        />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/wrap_current"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorAccent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:padding="@dimen/spacing_double"
+
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        >
+
+                        <TextView
+                            android:id="@+id/slots"
+                            style="@style/TextAppearance.AppCompat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="@{workout.bookedSlotCount + `/` + workout.totalSlotCount}"
+                            android:textColor="@android:color/white"
+
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+
+                            tools:text="32/33"
+                            />
+
+
+                        <TextView
+                            android:id="@+id/time"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+
+                            android:gravity="start"
+                            android:text="@{workout.timeInterval}"
+                            android:textColor="@android:color/white"
+
+                            app:layout_constraintEnd_toStartOf="@id/slots"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+
+                            tools:text="07:00 - 09:00"
+                            />
+
+                        <TextView
+                            android:id="@+id/instructor"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+
+                            android:gravity="start"
+                            android:text="@{workout.getInstructorNames()}"
+                            android:textColor="@android:color/white"
+
+                            app:layout_constraintEnd_toStartOf="@id/slots"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/time"
+
+                            tools:text="@string/dummy_name"
+                            />
+
+                        <TextView
+                            android:id="@+id/location"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+
+                            android:gravity="start"
+                            android:text="@{workout.room + `, ` +  workout.facility}"
+                            android:textColor="@android:color/white"
+
+                            app:layout_constraintEnd_toStartOf="@id/slots"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/instructor"
+
+                            tools:layout_editor_absoluteX="0dp"
+                            tools:text="Moskva, IKSU Sport"
+                            />
+                    </android.support.constraint.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/workout_notice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:background="@color/colorAccentLight"
+                        android:drawablePadding="@dimen/spacing_default"
+                        android:drawableStart="@drawable/ic_info_white_24dp"
+                        android:gravity="start|center_vertical"
+                        android:padding="@dimen/spacing_double"
+                        android:text="@{workout.notice}"
+                        android:textColor="@android:color/white"
+                        android:visibility="@{workout.notice.equals(``) ? View.GONE : View.VISIBLE}"
+
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/wrap_current"
+                        tools:text="This is a notice"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/heading_about"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_double"
+                        android:text="@string/label_about_the_class"
+                        app:layout_constraintEnd_toStartOf="@id/horizontal_right_guideline"
+                        app:layout_constraintStart_toEndOf="@id/horizontal_left_guideline"
+                        app:layout_constraintTop_toBottomOf="@id/workout_notice"
+                        tools:layout_editor_absoluteX="16dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/workout_description"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_default"
+                        android:text="@{helper.getDescriptionForWorkout(workout)}"
+                        android:textAppearance="@style/TextAppearance.AppCompat"
+                        app:layout_constraintEnd_toStartOf="@id/horizontal_right_guideline"
+                        app:layout_constraintStart_toEndOf="@id/horizontal_left_guideline"
+                        app:layout_constraintTop_toBottomOf="@+id/heading_about"
+                        tools:layout_editor_absoluteX="16dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/heading_future"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_double"
+                        android:paddingBottom="@dimen/spacing_default"
+                        android:text="@string/label_similar_sessions"
+                        app:layout_constraintEnd_toStartOf="@id/horizontal_right_guideline"
+                        app:layout_constraintStart_toEndOf="@id/horizontal_left_guideline"
+                        app:layout_constraintTop_toBottomOf="@+id/workout_description"
+                        tools:layout_editor_absoluteX="16dp"
+                        />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/upcoming_classes"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_default"
+                        android:layout_marginBottom="?android:attr/actionBarSize"
+                        app:layout_constraintBottom_toTopOf="@+id/vertical_bottom_guideline"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/heading_future"
+                        tools:listitem="@layout/list_item_schedule_overview"
+                        />
+
+                    <TextView
+                        android:id="@+id/upcoming_classes_empty"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/msg_no_other_sessions_for_workout"
+                        android:textAppearance="@style/TextAppearance.AppCompat"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@+id/vertical_bottom_guideline"
+                        app:layout_constraintEnd_toStartOf="@id/horizontal_right_guideline"
+                        app:layout_constraintStart_toEndOf="@id/horizontal_left_guideline"
+                        app:layout_constraintTop_toBottomOf="@+id/heading_future"
+                        tools:layout_editor_absoluteX="192dp"
+                        />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/guideline5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_begin="74dp"
+                        tools:layout_editor_absoluteX="0dp"
+                        tools:layout_editor_absoluteY="155dp"
+                        />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/guideline4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        tools:layout_editor_absoluteX="0dp"
+                        tools:layout_editor_absoluteY="-841dp"
+                        />
+                </android.support.constraint.ConstraintLayout>
+            </android.support.v4.widget.NestedScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <!-- TODO: Animate this into view in "onViewCreated" or something -->
+        <FrameLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@color/colorAccent"
-            android:padding="@dimen/spacing_double"
-
             android:clickable="true"
             android:focusable="true"
-            android:focusableInTouchMode="true"
-          >
-
-          <Button
-            style="@style/Widget.AppCompat.Button"
-            android:id="@+id/event_action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="@string/label_reserve"
-            android:textAllCaps="true"
-            android:textColor="@android:color/white"
-            android:gravity="center"
-            android:backgroundTint="@{statusTint}"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-
-            android:visibility="@{helper.shouldShowBookingButton(workout) ? View.VISIBLE : View.INVISIBLE}"
             android:onClick="@{(view) -> handler.onBookingButtonClick(view, workout)}"
-            android:transitionName="@string/transition_workout_status"
+
+            android:layout_gravity="bottom"
+            app:layout_anchorGravity="bottom"
+            app:layout_anchor="@id/nested_container"
+            app:layout_scrollFlags="scroll|enterAlways"
+
+            tools:background="@color/tools_hitbox_color"
+        >
+
+            <Button
+                android:id="@+id/event_action"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+
+                android:backgroundTint="@{statusTint}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
+                android:text="@{actionStringRes}"
+
+                android:clickable="false"
+                android:gravity="center"
+                android:duplicateParentState="true"
+
+                android:layout_margin="@dimen/spacing_double"
+
+                tools:text="@string/label_reserve"
+                tools:backgroundTint="@color/class_state_lt60"
             />
-
-          <TextView
-            android:id="@+id/time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
-            android:text="@{workout.timeInterval}"
-            android:textColor="@android:color/white"
-            android:gravity="start"
-
-            app:layout_constraintEnd_toStartOf="@id/event_action"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-
-            tools:text="07:00 - 09:00"
-            />
-
-          <TextView
-            android:id="@+id/instructor"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
-            android:text="@{workout.getInstructorNames()}"
-            android:textColor="@android:color/white"
-            android:gravity="start"
-
-            app:layout_constraintEnd_toStartOf="@id/event_action"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/time"
-
-            tools:text="@string/dummy_name"
-            />
-
-          <TextView
-            android:id="@+id/location"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
-            android:text="@{workout.room + `, ` +  workout.facility}"
-            android:textColor="@android:color/white"
-            android:gravity="start"
-
-            app:layout_constraintEnd_toStartOf="@id/event_action"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/instructor"
-
-            tools:layout_editor_absoluteX="0dp"
-            tools:text="Moskva, IKSU Sport"
-            />
-        </android.support.constraint.ConstraintLayout>
-        
-        <TextView
-            android:id="@+id/workout_notice"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
-            android:background="@color/colorAccentLight"
-            android:padding="@dimen/spacing_double"
-            android:text="@{workout.notice}"
-            android:gravity="start|center_vertical"
-            android:visibility="@{workout.notice.equals(``) ? View.GONE : View.VISIBLE}"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/wrap_current"
-
-            android:drawableStart="@drawable/ic_info_white_24dp"
-            android:textColor="@android:color/white"
-            android:drawablePadding="@dimen/spacing_default"
-            tools:text="This is a notice"
-            />
-
-
-        <TextView
-          android:id="@+id/heading_about"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/spacing_double"
-          android:text="@string/label_about_the_class"
-          app:layout_constraintEnd_toStartOf="@id/horizontal_right_guideline"
-          app:layout_constraintStart_toEndOf="@id/horizontal_left_guideline"
-          app:layout_constraintTop_toBottomOf="@id/workout_notice"
-          tools:layout_editor_absoluteX="16dp"
-          />
-
-        <TextView
-          android:id="@+id/workout_description"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/spacing_default"
-          android:text="@{helper.getDescriptionForWorkout(workout)}"
-          android:textAppearance="@style/TextAppearance.AppCompat"
-          app:layout_constraintEnd_toStartOf="@id/horizontal_right_guideline"
-          app:layout_constraintStart_toEndOf="@id/horizontal_left_guideline"
-          app:layout_constraintTop_toBottomOf="@+id/heading_about"
-          tools:layout_editor_absoluteX="16dp"
-          />
-
-        <TextView
-          android:id="@+id/heading_future"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/spacing_double"
-          android:paddingBottom="@dimen/spacing_default"
-          android:text="@string/label_similar_sessions"
-          app:layout_constraintEnd_toStartOf="@id/horizontal_right_guideline"
-          app:layout_constraintStart_toEndOf="@id/horizontal_left_guideline"
-          app:layout_constraintTop_toBottomOf="@+id/workout_description"
-          tools:layout_editor_absoluteX="16dp"
-          />
-
-        <android.support.v7.widget.RecyclerView
-          android:id="@+id/upcoming_classes"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/spacing_default"
-          app:layout_constraintBottom_toTopOf="@+id/vertical_bottom_guideline"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/heading_future"
-          tools:listitem="@layout/list_item_schedule_overview"
-          tools:layout_editor_absoluteX="0dp"
-          />
-
-        <TextView
-          android:id="@+id/upcoming_classes_empty"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:text="@string/msg_no_other_sessions_for_workout"
-          android:textAppearance="@style/TextAppearance.AppCompat"
-          android:visibility="gone"
-          app:layout_constraintBottom_toTopOf="@+id/vertical_bottom_guideline"
-          app:layout_constraintEnd_toStartOf="@id/horizontal_right_guideline"
-          app:layout_constraintStart_toEndOf="@id/horizontal_left_guideline"
-          app:layout_constraintTop_toBottomOf="@+id/heading_future"
-          tools:layout_editor_absoluteX="192dp"
-          />
-
-        <android.support.constraint.Guideline
-          android:id="@+id/guideline5"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          app:layout_constraintGuide_begin="74dp"
-          tools:layout_editor_absoluteX="0dp"
-          tools:layout_editor_absoluteY="155dp"
-          />
-
-        <android.support.constraint.Guideline
-          android:id="@+id/guideline4"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          tools:layout_editor_absoluteX="0dp"
-          tools:layout_editor_absoluteY="-841dp"
-          />
-      </android.support.constraint.ConstraintLayout>
-    </android.support.v4.widget.NestedScrollView>
-  </android.support.v4.widget.SwipeRefreshLayout>
-  </android.support.design.widget.CoordinatorLayout>
+        </FrameLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

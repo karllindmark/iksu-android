@@ -105,9 +105,6 @@
             app:layout_constraintEnd_toStartOf="@id/status_icon"
             app:layout_constraintVertical_chainStyle="packed"
             android:layout_marginEnd="@dimen/spacing_double"
-
-            android:transitionName="@string/transition_workout_title"
-
             tools:text="Total Training" />
 
         <TextView
