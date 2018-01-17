@@ -79,6 +79,11 @@ public class ReservationListFragment extends BaseListFragment<ReservationListIte
                             .putExtra(WorkoutDetailFragment.WORKOUT_TITLE, workout.getTitle())
                     );
                 }
+
+                @Override
+                public void onItemCountChanged(int count) {
+                    setUiState(count > 0 ? STATE_NORMAL : STATE_EMPTY, R.string.msg_no_reservations);
+                }
             },
             items
         );
@@ -136,7 +141,6 @@ public class ReservationListFragment extends BaseListFragment<ReservationListIte
                     if (count > 0) {
                         final List<ReservationListItem> reservations = getReservationsAsPreparedList(shouldOnlyShowCompleted);
                         adapter.setItems(reservations);
-                        setUiState(reservations.size() > 0 ? STATE_NORMAL : STATE_EMPTY, R.string.msg_no_reservations);
                     } else {
                         setUiState(STATE_EMPTY, R.string.msg_no_reservations);
                     }

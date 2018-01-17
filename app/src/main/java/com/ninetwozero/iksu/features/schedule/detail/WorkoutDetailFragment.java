@@ -84,7 +84,9 @@ public class WorkoutDetailFragment extends BaseFragment {
 
     private final ScheduleDetailHandler scheduleHandler = new ScheduleDetailHandler();
     private final WorkoutUiHelper workoutUiHelper = new WorkoutUiHelper();
+
     private final ReservationReceiver reservationReceiver = new ReservationReceiver();
+    private final WorkoutReceiver workoutReceiver = new WorkoutReceiver();
     private final WorkoutChangeListener workoutChangeListener = new WorkoutChangeListener();
 
     public static WorkoutDetailFragment newInstance(final String workoutId, final String workoutTitle) {
@@ -230,10 +232,12 @@ public class WorkoutDetailFragment extends BaseFragment {
         intentFilter.addAction(ACTION_CREATE);
 
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(reservationReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(workoutReceiver, new IntentFilter(IksuWorkoutService.ACTION));
     }
 
     private void removeBroadcastReceivers() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(reservationReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(workoutReceiver);
     }
 
     public void onBackPressed() {
@@ -262,7 +266,6 @@ public class WorkoutDetailFragment extends BaseFragment {
         viewbinding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(getContext(), updatedWorkout, false));
         viewbinding.setVariable(BR.statusTint, ContextCompat.getColor(getContext(), workoutUiHelper.getColorForStatusBadge(updatedWorkout)));
         viewbinding.executePendingBindings();
-
         swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -344,12 +347,32 @@ public class WorkoutDetailFragment extends BaseFragment {
 
             startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity()).toBundle());
         }
+
+        @Override
+        public void onItemCountChanged(int count) {
+            // NO-OP
+        }
     }
 
     private class WorkoutChangeListener implements RealmChangeListener<Workout> {
         @Override
         public void onChange(Workout updatedWorkout) {
             onWorkoutChangedCallback(updatedWorkout);
+        }
+    }
+
+    class WorkoutReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final View view = getView();
+            if (view == null) {
+                return;
+            }
+
+            if (IksuWorkoutService.ACTION.equals(intent.getAction())) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 

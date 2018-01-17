@@ -46,6 +46,7 @@ public class WorkoutListAdapter extends RealmRecyclerViewAdapter<Workout, Workou
     public void updateData(@Nullable OrderedRealmCollection<Workout> data) {
         super.updateData(data);
         notifyDataSetChanged();
+        this.listCallbacks.onItemCountChanged(data.size());
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {

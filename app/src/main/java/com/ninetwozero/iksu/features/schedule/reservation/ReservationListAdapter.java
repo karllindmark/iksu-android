@@ -53,6 +53,7 @@ public class ReservationListAdapter extends RecyclerView.Adapter<ReservationList
     public void setItems(List<ReservationListItem> items) {
         this.items = items;
         notifyItemRangeChanged(0, items.size());
+        listCallbacks.onItemCountChanged(items.size());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

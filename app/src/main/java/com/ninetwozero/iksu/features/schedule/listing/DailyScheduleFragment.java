@@ -72,7 +72,7 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
         super.onViewCreated(view, savedInstanceState);
 
         if (sharedPreferences.contains(IksuApp.getLatestRefreshKey())) {
-            setUiState(adapter.getItemCount() == 0 ? STATE_EMPTY : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
+            setUiState(adapter.getItemCount() == 0 ? STATE_LOADING : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
 
             // Pre-secroll the list to the first "reservable" class
             for (int i = 0, max = adapter.getItemCount(); i < max; i++) {
@@ -140,12 +140,12 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
 
     @Override
     protected void createAdapter() {
-        adapter = new WorkoutListAdapter(
-            getContext(),
-            new ListHandler(),
-            loadWorkoutsFromDatabase(shouldOnlyLoadWorkoutsRelevantToAccount, shouldUseFilterSettings),
-            true
-        );
+        final OrderedRealmCollection<Workout> workouts = loadWorkoutsFromDatabase(shouldOnlyLoadWorkoutsRelevantToAccount, shouldUseFilterSettings);
+        if (workouts.isEmpty()) {
+            setUiState(STATE_LOADING);
+        }
+
+        adapter = new WorkoutListAdapter(getContext(), new ListHandler(), workouts,true);
     }
 
     @Override
@@ -161,7 +161,6 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
     @Override
     public void reconfigureListDataSource() {
         adapter.updateData(loadWorkoutsFromDatabase(shouldOnlyLoadWorkoutsRelevantToAccount, shouldUseFilterSettings));
-        setUiState(adapter.getItemCount() == 0 ? STATE_EMPTY : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
     }
 
     private OrderedRealmCollection<Workout> loadWorkoutsFromDatabase(final boolean fromConnectedAccount, final boolean useFilters) {
@@ -231,6 +230,14 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
             }
 
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+        }
+
+        @Override
+        public void onItemCountChanged(int count) {
+            setUiState(
+                count == 0 ? STATE_EMPTY : STATE_NORMAL,
+                hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts
+            );
         }
     }
 
