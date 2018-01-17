@@ -8,27 +8,30 @@ import com.ninetwozero.iksu.models.Workout;
 
 public class WorkoutUiHelper {
     public String getActionTextForWorkout(final Context context, final Workout workout) {
-        return getActionTextForWorkout(context, workout, false);
+        return getActionTextForWorkout(context, workout, true);
     }
 
-    public String getActionTextForWorkout(final Context context, final Workout workout, final boolean showActionText) {
+    public String getActionTextForWorkout(final Context context, final Workout workout, final boolean showCountIfApplicable) {
+        if (showCountIfApplicable) {
+            return workout.getBookedSlotCount() + "/" + workout.getTotalSlotCount();
+        }
+
         if (workout.getReservationId() != 0) {
             return context.getString(R.string.label_reserved);
         } else if (workout.isDropin()) {
             return context.getString(R.string.label_dropin);
-        } else if (workout.isOpenForReservations() && workout.getBookedSlotCount() < workout.getTotalSlotCount()) {
-            return showActionText ? context.getString(R.string.label_reserve) : workout.getBookedSlotCount() + "/" + workout.getTotalSlotCount();
-        } else if (workout.getBookedSlotCount() >= workout.getTotalSlotCount()) {
-            return context.getString(R.string.label_full);
-        } else if (workout.getReservationDeadline() > System.currentTimeMillis()) {
-            return context.getString(R.string.label_info);
-        } else {
-            return context.getString(R.string.empty);
+        } else if (workout.isOpenForReservations()) {
+            if (workout.getBookedSlotCount() < workout.getTotalSlotCount()) {
+                return context.getString(R.string.label_reserve);
+            } else if (workout.getBookedSlotCount() >= workout.getTotalSlotCount()) {
+                return context.getString(R.string.label_full);
+            } else if (workout.getReservationDeadline() > System.currentTimeMillis()) {
+                return context.getString(R.string.label_info);
+            }
+        } else if (System.currentTimeMillis() >= workout.getEndDate()) {
+            return context.getString(R.string.label_class_started);
         }
-    }
-
-    public boolean shouldShowBookingButton(final Workout workout) {
-        return workout.getReservationDeadline() > System.currentTimeMillis();
+        return context.getString(R.string.empty);
     }
 
     public int getTitleForFilter(final String id, final int type) {
@@ -276,16 +279,18 @@ public class WorkoutUiHelper {
                 return R.color.colorAccentLight;
             } else if (workout.isDropin()) {
                 return R.color.class_state_lt60;
-            } else if (workout.getTotalSlotCount() > 0) {
-                double fraction = workout.getBookedSlotCount() / (workout.getTotalSlotCount() * 1.0f);
-                if (fraction < 0.75) {
-                    return R.color.class_state_lt60;
-                } else if (fraction >= 0.75 && fraction < 1) {
-                    return R.color.class_state_lt80;
-                } else if (fraction >= 1) {
-                    return R.color.class_state_gte80;
-                } else {
-                    return R.color.grey;
+            } else if (workout.isOpenForReservations()) {
+                if (workout.getTotalSlotCount() > 0) {
+                    double fraction = workout.getBookedSlotCount() / (workout.getTotalSlotCount() * 1.0f);
+                    if (fraction < 0.75) {
+                        return R.color.class_state_lt60;
+                    } else if (fraction >= 0.75 && fraction < 1) {
+                        return R.color.class_state_lt80;
+                    } else if (fraction >= 1) {
+                        return R.color.grey;
+                    } else {
+                        return R.color.grey;
+                    }
                 }
             }
         }

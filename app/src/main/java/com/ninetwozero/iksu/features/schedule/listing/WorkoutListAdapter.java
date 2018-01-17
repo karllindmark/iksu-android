@@ -46,6 +46,7 @@ public class WorkoutListAdapter extends RealmRecyclerViewAdapter<Workout, Workou
     public void updateData(@Nullable OrderedRealmCollection<Workout> data) {
         super.updateData(data);
         notifyDataSetChanged();
+        this.listCallbacks.onItemCountChanged(data.size());
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
@@ -64,7 +65,7 @@ public class WorkoutListAdapter extends RealmRecyclerViewAdapter<Workout, Workou
             this.binding.setVariable(BR.workout, workout);
             this.binding.setVariable(BR.statusTint, ContextCompat.getColor(context, workoutUiHelper.getColorForStatusBadge(workout)));
             this.binding.setVariable(BR.inactive, System.currentTimeMillis() > workout.getStartDate());
-            this.binding.setVariable(BR.actionText, workoutUiHelper.getActionTextForWorkout(context, workout));
+            this.binding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(context, workout));
             this.binding.executePendingBindings();
         }
     }

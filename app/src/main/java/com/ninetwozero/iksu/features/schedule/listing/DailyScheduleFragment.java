@@ -1,5 +1,6 @@
 package com.ninetwozero.iksu.features.schedule.listing;
 
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
@@ -72,7 +72,7 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
         super.onViewCreated(view, savedInstanceState);
 
         if (sharedPreferences.contains(IksuApp.getLatestRefreshKey())) {
-            setUiState(adapter.getItemCount() == 0 ? STATE_EMPTY : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
+            setUiState(adapter.getItemCount() == 0 ? STATE_LOADING : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
 
             // Pre-secroll the list to the first "reservable" class
             for (int i = 0, max = adapter.getItemCount(); i < max; i++) {
@@ -140,12 +140,12 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
 
     @Override
     protected void createAdapter() {
-        adapter = new WorkoutListAdapter(
-            getContext(),
-            new ListHandler(),
-            loadWorkoutsFromDatabase(shouldOnlyLoadWorkoutsRelevantToAccount, shouldUseFilterSettings),
-            true
-        );
+        final OrderedRealmCollection<Workout> workouts = loadWorkoutsFromDatabase(shouldOnlyLoadWorkoutsRelevantToAccount, shouldUseFilterSettings);
+        if (workouts.isEmpty()) {
+            setUiState(STATE_LOADING);
+        }
+
+        adapter = new WorkoutListAdapter(getContext(), new ListHandler(), workouts,true);
     }
 
     @Override
@@ -161,7 +161,6 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
     @Override
     public void reconfigureListDataSource() {
         adapter.updateData(loadWorkoutsFromDatabase(shouldOnlyLoadWorkoutsRelevantToAccount, shouldUseFilterSettings));
-        setUiState(adapter.getItemCount() == 0 ? STATE_EMPTY : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
     }
 
     private OrderedRealmCollection<Workout> loadWorkoutsFromDatabase(final boolean fromConnectedAccount, final boolean useFilters) {
@@ -225,15 +224,20 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
             intent.putExtra(WorkoutDetailFragment.WORKOUT_ID, workout.getId());
             intent.putExtra(WorkoutDetailFragment.WORKOUT_TITLE, workout.getTitle());
 
-
-            View sourceView = view.findViewById(R.id.wrap_status);
-            if (sourceView == null || (!workout.isOpenForReservations() && workout.getReservationId() == 0)) {
+            if (!workout.isOpenForReservations() && workout.getReservationId() == 0) {
                 startActivity(intent);
                 return;
             }
 
-            final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), sourceView, getString(R.string.transition_workout_status));
-            startActivity(intent, options.toBundle());
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+        }
+
+        @Override
+        public void onItemCountChanged(int count) {
+            setUiState(
+                count == 0 ? STATE_EMPTY : STATE_NORMAL,
+                hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts
+            );
         }
     }
 

@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,14 +64,16 @@ public class WorkoutDetailFragment extends BaseFragment {
 
     @BindView(R.id.toolbar)
     protected Toolbar toolbar;
+    @BindView(R.id.nested_container)
+    protected NestedScrollView scrollingContainer;
     @BindView(R.id.swipeRefreshLayout)
     protected SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.event_action)
-    protected Button callToAction;
     @BindView(R.id.upcoming_classes)
     protected RecyclerView upcomingClassesList;
     @BindView(R.id.upcoming_classes_empty)
     protected View upcomingClassesEmptyView;
+    @BindView(R.id.event_action)
+    protected Button callToAction;
 
     private ViewDataBinding viewbinding;
     private WorkoutListAdapter upcomingClassesListAdapter;
@@ -81,7 +84,9 @@ public class WorkoutDetailFragment extends BaseFragment {
 
     private final ScheduleDetailHandler scheduleHandler = new ScheduleDetailHandler();
     private final WorkoutUiHelper workoutUiHelper = new WorkoutUiHelper();
+
     private final ReservationReceiver reservationReceiver = new ReservationReceiver();
+    private final WorkoutReceiver workoutReceiver = new WorkoutReceiver();
     private final WorkoutChangeListener workoutChangeListener = new WorkoutChangeListener();
 
     public static WorkoutDetailFragment newInstance(final String workoutId, final String workoutTitle) {
@@ -114,6 +119,7 @@ public class WorkoutDetailFragment extends BaseFragment {
         viewbinding.setVariable(BR.workout, workout);
         viewbinding.setVariable(BR.handler, scheduleHandler);
         viewbinding.setVariable(BR.helper, workoutUiHelper);
+        viewbinding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(getContext(), workout, false));
         viewbinding.setVariable(BR.statusTint, ContextCompat.getColor(getContext(), workoutUiHelper.getColorForStatusBadge(workout)));
         viewbinding.executePendingBindings();
 
@@ -124,7 +130,6 @@ public class WorkoutDetailFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        callToAction.setText(workoutUiHelper.getActionTextForWorkout(getContext(), workout, true));
         setupSimilarClassesView();
         setupSwipeRefreshLayout();
     }
@@ -181,6 +186,7 @@ public class WorkoutDetailFragment extends BaseFragment {
         );
         upcomingClassesList.setLayoutManager(layoutManager);
         upcomingClassesList.setAdapter(upcomingClassesListAdapter);
+
         toggleUpcomingClassesView(upcomingClassesListAdapter.getItemCount() > 0);
     }
 
@@ -226,10 +232,12 @@ public class WorkoutDetailFragment extends BaseFragment {
         intentFilter.addAction(ACTION_CREATE);
 
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(reservationReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(workoutReceiver, new IntentFilter(IksuWorkoutService.ACTION));
     }
 
     private void removeBroadcastReceivers() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(reservationReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(workoutReceiver);
     }
 
     public void onBackPressed() {
@@ -255,10 +263,9 @@ public class WorkoutDetailFragment extends BaseFragment {
 
     private void onWorkoutChangedCallback(final Workout updatedWorkout) {
         viewbinding.setVariable(BR.workout, updatedWorkout);
+        viewbinding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(getContext(), updatedWorkout, false));
         viewbinding.setVariable(BR.statusTint, ContextCompat.getColor(getContext(), workoutUiHelper.getColorForStatusBadge(updatedWorkout)));
         viewbinding.executePendingBindings();
-
-        callToAction.setText(workoutUiHelper.getActionTextForWorkout(getContext(), updatedWorkout, true));
         swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -338,8 +345,12 @@ public class WorkoutDetailFragment extends BaseFragment {
             intent.putExtra(WorkoutDetailFragment.WORKOUT_ID, workout.getId());
             intent.putExtra(WorkoutDetailFragment.WORKOUT_TITLE, workout.getTitle());
 
-            final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.wrap_status), getString(R.string.transition_workout_status));
-            startActivity(intent, options.toBundle());
+            startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity()).toBundle());
+        }
+
+        @Override
+        public void onItemCountChanged(int count) {
+            // NO-OP
         }
     }
 
@@ -347,6 +358,21 @@ public class WorkoutDetailFragment extends BaseFragment {
         @Override
         public void onChange(Workout updatedWorkout) {
             onWorkoutChangedCallback(updatedWorkout);
+        }
+    }
+
+    class WorkoutReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final View view = getView();
+            if (view == null) {
+                return;
+            }
+
+            if (IksuWorkoutService.ACTION.equals(intent.getAction())) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 

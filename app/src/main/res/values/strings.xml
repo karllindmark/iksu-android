@@ -19,7 +19,7 @@
     <string name="release_a">The Abdominal release</string>
 
     <!-- Labels -->
-    <string name="label_full">Full</string>
+    <string name="label_full">No slots left</string>
     <string name="label_dropin">Drop in</string>
     <string name="label_workouts">Classes</string>
     <string name="label_reserved">Signed up</string>
@@ -72,6 +72,9 @@
     <string name="label_changelog">Changelog</string>
     <string name="label_rate_the_app">Rate the app on Google Play</string>
     <string name="label_kill_session">Kill session</string>
+    <string name="label_debug">Debug</string>
+    <string name="label_debug_reset_token">Reset API token</string>
+    <string name="label_class_started">The class has already started</string>
 
     <!-- Messages -->
     <string name="msg_loading_workouts">Loading classes</string>
@@ -127,6 +130,4 @@
     <string name="x_by_y">%1$s by %2$s</string>
     <string name="msg_account_disabled">Account \'%1$s\' has been disabled</string>
     <string name="msg_activating_devmode">Activating developer mode</string>
-    <string name="label_debug">Debug</string>
-    <string name="label_debug_reset_token">Reset API token</string>
 </resources>
