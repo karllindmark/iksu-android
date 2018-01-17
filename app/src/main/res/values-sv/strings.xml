@@ -12,7 +12,7 @@
     <string name="label_email">E-postadress</string>
     <string name="label_facilities">Anläggningar</string>
     <string name="label_filter">Filter</string>
-    <string name="label_full">Fullt</string>
+    <string name="label_full">Ingap latser kvar</string>
     <string name="label_info">Info</string>
     <string name="label_instructor_unknown">Okänd instruktör</string>
     <string name="label_instructors">Instruktörer</string>
@@ -106,4 +106,5 @@
     <string name="msg_activating_devmode">Aktiverar utvecklarläget</string>
     <string name="label_debug">Felsökning</string>
     <string name="label_debug_reset_token">Nollställ API-nyckel</string>
+    <string name="label_class_started">Passet har redan börjat</string>
 </resources>

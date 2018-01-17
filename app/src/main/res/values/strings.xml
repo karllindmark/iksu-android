@@ -74,7 +74,7 @@
     <string name="label_kill_session">Kill session</string>
     <string name="label_debug">Debug</string>
     <string name="label_debug_reset_token">Reset API token</string>
-    <string name="label_class_started">Class has already started</string>
+    <string name="label_class_started">The class has already started</string>
 
     <!-- Messages -->
     <string name="msg_loading_workouts">Loading classes</string>
