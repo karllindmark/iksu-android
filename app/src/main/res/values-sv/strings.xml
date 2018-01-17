@@ -107,4 +107,5 @@
     <string name="label_debug">Felsökning</string>
     <string name="label_debug_reset_token">Nollställ API-nyckel</string>
     <string name="label_class_started">Passet har redan börjat</string>
+    <string name="release_b">Biceps-releasen</string>
 </resources>

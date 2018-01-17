@@ -11,14 +11,17 @@ import java.util.Map;
 
 class ChangelogUtil {
     private static final String RELEASE_A = "ABDOMINAL";
+    private static final String RELEASE_B = "BICEPS";
 
     private final Context context;
 
     private List<String> releaseOrder = new ArrayList<String>() {{
         add(RELEASE_A);
+        add(RELEASE_B);
     }};
 
     private Map<String, Integer> releaseMapping = new HashMap<String, Integer>() {{
+        put(RELEASE_B, R.string.changelog_v_biceps);
         put(RELEASE_A, R.string.changelog_v_abdominal);
     }};
 

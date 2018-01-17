@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">Open IKSU</string>
     <string name="app_name_1" translatable="false">Open</string>
     <string name="app_name_2" translatable="false">IKSU</string>
-    <string name="app_current_release" translatable="false">@string/release_a</string>
+    <string name="app_current_release" translatable="false">@string/release_b</string>
     <string name="developer_name" translatable="false">Karl Lindmark</string>
     <string name="developer_email" translatable="false">support@ninetwozero.com</string>
     <string name="developer_title">App Developer</string>
@@ -17,6 +17,7 @@
 
     <!-- Release names -->
     <string name="release_a">The Abdominal release</string>
+    <string name="release_b">The Biceps release</string>
 
     <!-- Labels -->
     <string name="label_full">No slots left</string>

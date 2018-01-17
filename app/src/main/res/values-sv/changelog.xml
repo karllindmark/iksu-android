@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="changelog_v_abdominal">Den första releasen! Du kan läsa allt om de olika passen som finns tillgängliga, såväl som logga in för att faktiskt boka dom.\n\nHoppas det smakar!</string>
+    <string name="changelog_v_biceps">Den andra releasen! Användargränssnittet har designats om på vissa ställen, och en handfull buggar har åtgärdats under ytan.\n\nHoppas det smakar!</string>
 </resources>
