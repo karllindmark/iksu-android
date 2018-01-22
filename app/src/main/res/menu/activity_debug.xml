@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
 >
+
+    <item
+        android:id="@+id/menu_test_checkin"
+        android:title="@string/label_debug_test_checkin"
+        android:icon="@drawable/ic_hot_tub_black_24dp"
+        app:showAsAction="withText"
+        />
     <item
         android:id="@+id/menu_reset_api_token"
         android:title="@string/label_debug_reset_token"

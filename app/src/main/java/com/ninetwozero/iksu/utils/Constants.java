@@ -28,6 +28,7 @@ public class Constants {
     public static final String TYPE = "type";
     public static final String SESSION_ID = "sessionId";
     public static final String RESERVATION_ID = "reservationId";
+    public static final String CHECKED_IN = "checkedIn";
 
     public static final String LOCATION_IKSU_SPORT = "facility_sport";
     public static final String LOCATION_IKSU_SPA = "facility_spa";

@@ -1,5 +1,7 @@
 package com.ninetwozero.iksu.database.migrations;
 
+import com.ninetwozero.iksu.utils.Constants;
+
 import io.realm.DynamicRealm;
 import io.realm.RealmMigration;
 import io.realm.RealmSchema;
@@ -18,5 +20,6 @@ public class IksuDatabaseMigration implements RealmMigration {
         schema.get("Workout")
             .addField("monitoring", boolean.class)
             .addField("checkedIn", boolean.class);
+            .addField(Constants.CHECKED_IN, boolean.class);
     }
 }
