@@ -43,6 +43,8 @@ public class Workout extends RealmObject implements ReservationListItem {
     private long reservationDeadline;
     private long reservationId;
     private boolean ratedByUser;
+    private boolean monitoring;
+    private boolean checkedIn;
 
     public String getPkId() {
         return pkId;
@@ -260,12 +262,32 @@ public class Workout extends RealmObject implements ReservationListItem {
         this.reservationId = reservationId;
     }
 
+    public boolean hasReservation() {
+        return reservationId != 0;
+    }
+
     public boolean isRatedByUser() {
         return ratedByUser;
     }
 
     public void setRatedByUser(boolean ratedByUser) {
         this.ratedByUser = ratedByUser;
+    }
+
+    public boolean isMonitoring() {
+        return monitoring;
+    }
+
+    public void setMonitoring(boolean monitoring) {
+        this.monitoring = monitoring;
+    }
+
+    public boolean hasCheckedIn() {
+        return checkedIn;
+    }
+
+    public void setCheckedIn(boolean checkedIn) {
+        this.checkedIn = checkedIn;
     }
 
     public String getInstructorNames() {
@@ -278,6 +300,10 @@ public class Workout extends RealmObject implements ReservationListItem {
         } else {
             return "-";
         }
+    }
+
+    public boolean isFullyBooked() {
+        return bookedSlotCount == totalSlotCount;
     }
 
     @Override
@@ -318,4 +344,5 @@ public class Workout extends RealmObject implements ReservationListItem {
     public int getItemType() {
         return RESERVATION;
     }
+
 }

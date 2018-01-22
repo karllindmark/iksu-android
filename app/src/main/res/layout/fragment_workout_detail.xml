@@ -12,7 +12,9 @@
         <variable name="helper" type="com.ninetwozero.iksu.features.schedule.shared.WorkoutUiHelper"/>
         <variable name="handler" type="com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment.ScheduleDetailHandler"/>
         <variable name="actionStringRes" type="String" />
+        <variable name="secondaryActionStringRes" type="int" />
         <variable name="statusTint" type="int" />
+        <variable name="showSecondaryAction" type="boolean" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -109,7 +111,7 @@
 
                     <android.support.constraint.ConstraintLayout
                         android:id="@+id/wrap_current"
-                        android:layout_width="0dp"
+                        android:layout_width="411dp"
                         android:layout_height="wrap_content"
                         android:background="@color/colorAccent"
                         android:clickable="true"
@@ -176,12 +178,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
 
+                            android:backgroundTint="@{statusTint}"
                             android:text="@{workout.bookedSlotCount + `/` + workout.totalSlotCount}"
                             android:textColor="@android:color/white"
-                            android:backgroundTint="@{statusTint}"
 
-                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="@id/location"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@id/time"
 
                             tools:backgroundTint="@color/class_state_gte80"
@@ -193,12 +195,12 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
 
+                            android:layout_marginTop="@dimen/spacing_double"
                             android:background="#33000000"
                             android:drawablePadding="@dimen/spacing_default"
                             android:drawableStart="@drawable/ic_info_white_24dp"
-                            android:gravity="start|center_vertical"
 
-                            android:layout_marginTop="@dimen/spacing_double"
+                            android:gravity="start|center_vertical"
                             android:padding="@dimen/spacing_double"
 
                             android:text="@{workout.notice}"
@@ -212,24 +214,51 @@
                             />
 
                         <Button
-                            style="@style/Widget.AppCompat.Button.Colored"
                             android:id="@+id/event_action"
-                            android:layout_width="match_parent"
+                            style="@style/Widget.AppCompat.Button.Colored"
+                            android:layout_width="0dp"
                             android:layout_height="?android:attr/actionBarSize"
 
+                            android:layout_marginBottom="@dimen/spacing_double"
+                            android:layout_marginTop="@dimen/spacing_double"
+
                             android:backgroundTint="@{statusTint}"
+                            android:onClick="@{(view) -> handler.onPrimaryActionClick(view, workout)}"
                             android:text="@{actionStringRes}"
 
-                            android:onClick="@{(view) -> handler.onBookingButtonClick(view, workout)}"
-                            android:layout_marginTop="@dimen/spacing_double"
-                            android:layout_marginBottom="@dimen/spacing_double"
-
-                            app:layout_constraintTop_toBottomOf="@id/workout_notice"
-                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/workout_notice"
 
-                            tools:text="@string/label_reserve"
-                            tools:backgroundTint="@color/class_state_gte80"
+                            tools:backgroundTint="@color/darker_grey"
+                            tools:text="@string/label_full"
+                            />
+
+                        <Button
+                            android:id="@+id/event_action_secondary"
+                            style="@style/Widget.AppCompat.Button.Colored"
+                            android:layout_width="0dp"
+                            android:layout_height="?android:attr/actionBarSize"
+
+                            android:layout_marginTop="@dimen/spacing_default"
+                            android:backgroundTint="@color/class_state_lt60"
+
+                            android:onClick="@{(view) -> handler.onSecondaryActionClick(view, workout)}"
+                            android:text="@{secondaryActionStringRes}"
+                            android:visibility="@{showSecondaryAction? View.VISIBLE : View.GONE }"
+
+                            app:layout_constraintEnd_toEndOf="@id/event_action"
+                            app:layout_constraintStart_toStartOf="@id/event_action"
+                            app:layout_constraintTop_toBottomOf="@id/event_action"
+
+                            tools:text="@string/label_monitor_q"
+                            />
+                        
+                        <android.support.constraint.Barrier
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:barrierDirection="bottom"
+                            app:constraint_referenced_ids="event_action,event_action_secondary"
                         />
 
                     </android.support.constraint.ConstraintLayout>

@@ -62,7 +62,7 @@ public interface IksuApi {
     Call<BookingResponse> createReservation(@Body RequestBody body);
 
     @POST(USER_CHECKIN_URL)
-    Call<BookingResponse> checkin(@Path("id") long reservationId, @Body RequestBody body);
+    Call<String> checkin(@Path("id") long reservationId, @Body RequestBody body);
 
     @DELETE(USER_RESERVATIONS_URL)
     Call<CancelReservationResponse> cancelReservation(@Query("sessionId") String sessionId, @Query("classId") String workoutId, @Query("reservationId") long reservationId, @Query("locationId") String facilityId);

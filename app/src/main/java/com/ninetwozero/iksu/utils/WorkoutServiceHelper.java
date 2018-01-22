@@ -53,20 +53,20 @@ public class WorkoutServiceHelper {
             final Response<Workout> response = IksuApp.getApi().getWorkoutById(id).execute();
             final Workout workout = response.body();
             if (workout != null) {
-                long reservationId = 0;
+                WorkoutReservation currentReservation = null;
                 if (userAccount != null && !userAccount.isDisabled()) {
                     final List<WorkoutReservation> reservations = IksuApp.getApi().getUserReservations(userAccount.getSessionId()).execute().body();
                     if (reservations != null) {
                         for (WorkoutReservation reservation : reservations) {
                             if (reservation.getWorkoutId().equals(workout.getId())) {
-                                reservationId = reservation.getId();
+                                currentReservation = reservation;
                                 break;
                             }
                         }
                     }
 
                 }
-                status = handleResponseBodyForSingle(workout, reservationId, realm);
+                status = handleResponseBodyForSingle(workout, currentReservation, realm);
             }
         } catch (IOException ignored) {
             status = RESULT_ERROR;
@@ -85,7 +85,9 @@ public class WorkoutServiceHelper {
         final String toDate = DateUtils.getDate(DAYS_TO_SHOW);
 
         final Realm realm = Realm.getDefaultInstance();
-        final UserAccount userAccount = shouldDoUserCall ? realm.where(UserAccount.class).equalTo(Constants.USERNAME, IksuApp.getActiveUsername()).findFirst() : null;
+        final UserAccount userAccount = shouldDoUserCall ?
+            realm.where(UserAccount.class).equalTo(Constants.USERNAME, IksuApp.getActiveUsername()).findFirst() :
+            null;
 
         if (callback != null) {
             callback.onNewState(STATE_DOWNLOADING);
@@ -123,7 +125,7 @@ public class WorkoutServiceHelper {
         return status;
     }
 
-    private int handleResponseBodyForSingle(final Workout workout, long reservationId, Realm realm) {
+    private int handleResponseBodyForSingle(final Workout workout, WorkoutReservation reservation, Realm realm) {
         realm.beginTransaction();
 
         final Workout oldWorkout = realm.where(Workout.class)
@@ -132,14 +134,17 @@ public class WorkoutServiceHelper {
                 .findFirst();
 
         if (oldWorkout != null) {
-            workout.setReservationId(reservationId);
+            workout.setReservationId(reservation.getId());
+            workout.setCheckedIn(reservation.isCheckedIn());
             workout.setPkId(workout.getId() + "_" + oldWorkout.getConnectedAccount());
             workout.setConnectedAccount(oldWorkout.getConnectedAccount());
             workout.setRatedByUser(oldWorkout.isRatedByUser());
+            workout.setMonitoring(oldWorkout.isMonitoring());
         } else {
             if (IksuApp.hasSelectedAccount()) {
                 workout.setPkId(workout.getId() + "_" + IksuApp.getActiveUsername());
                 workout.setConnectedAccount(IksuApp.getActiveUsername());
+                workout.setCheckedIn(reservation.isCheckedIn());
             } else {
                 workout.setPkId(workout.getId());
             }
@@ -157,19 +162,22 @@ public class WorkoutServiceHelper {
         int result;
         if (workouts == null) {
             if (wasUserCall) {
-                FirebaseAnalytics.getInstance(context).logEvent("CREDENTIALS_INVALIDATED", new Intent().putExtra(Constants.SESSION_ID, userAccount.getSessionId()).getExtras());
+                FirebaseAnalytics.getInstance(context).logEvent(
+                    "CREDENTIALS_INVALIDATED",
+                    new Intent().putExtra(Constants.SESSION_ID, userAccount.getSessionId()).getExtras()
+                );
             }
             result = RESULT_ERROR;
         } else {
             final String connectedAccount = userAccount == null ? null : userAccount.getUsername();
-            final Map<String, Long> workoutMap = new HashMap<>();
+            final Map<String, WorkoutReservation> reservationMap = new HashMap<>();
             if (reservations != null && reservations.size() > 0) {
                 final Long[] reservationIds = new Long[reservations.size()];
 
                 int i = 0;
                 for (WorkoutReservation reservation : reservations) {
                     reservationIds[i] = reservation.getId();
-                    workoutMap.put(reservation.getWorkoutId(), reservation.getId());
+                    reservationMap.put(reservation.getWorkoutId(), reservation);
                     i++;
                 }
 
@@ -183,12 +191,21 @@ public class WorkoutServiceHelper {
                 if (wasUserCall) {
                     workout.setPkId(workout.getId() + "_" + connectedAccount);
                     workout.setConnectedAccount(connectedAccount);
+
+                    final Workout oldWorkout = realm.where(Workout.class).equalTo("pkId", workout.getPkId()).findFirst();
+                    if (oldWorkout != null) {
+                        workout.setCheckedIn(oldWorkout.hasCheckedIn());
+                        workout.setMonitoring(oldWorkout.isMonitoring());
+                        workout.setRatedByUser(oldWorkout.isRatedByUser());
+                    }
                 } else {
                     workout.setPkId(workout.getId());
                 }
 
-                if (workoutMap.containsKey(workout.getId())) {
-                    workout.setReservationId(workoutMap.get(workout.getId()));
+                if (reservationMap.containsKey(workout.getId())) {
+                    final WorkoutReservation reservation = reservationMap.get(workout.getId());
+                    workout.setReservationId(reservation.getId());
+                    workout.setCheckedIn(reservation.isCheckedIn());
                 }
 
                 newWorkoutIds.add(workout.getId());

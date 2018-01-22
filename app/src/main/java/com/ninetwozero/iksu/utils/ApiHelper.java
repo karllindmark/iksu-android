@@ -1,5 +1,7 @@
 package com.ninetwozero.iksu.utils;
 
+import com.ninetwozero.iksu.R;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,6 +16,29 @@ public class ApiHelper {
 
     public static RequestBody createRequestBody(byte[] bytes) {
         return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bytes);
+    }
+
+    public static int getStringResourceForErrorType(final String key) {
+        switch (key) {
+            case "UserNotLoggedIn":
+                return R.string.msg_error_not_logged_in;
+            case "ClassCantCheckIn":
+                return R.string.msg_error_checkin_failed;
+            case "ClassAlreadyCheckedIn":
+                return R.string.msg_error_already_checkedin;
+            case "SystemsOverBurdened":
+            case "NetworkError":
+                return R.string.msg_error_iksu_backend;
+            default:
+                return R.string.msg_error_general;
+
+// Known errors codes:
+// - UserNotLoggedIn (Invalid session)
+// -  (Too early to check-in?)
+// -  (<--)
+// - SystemsOverBurdened (Vaj-Sing on the line)
+// - NetworkError (---^^---)
+        }
     }
 
     // Based on https://stackoverflow.com/a/5470279/860212

@@ -38,15 +38,6 @@ public class WorkoutDetailActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        if (fragment != null) {
-            fragment.onBackPressed();
-        }
-    }
-
     private void showDetailFragment() {
         fragment = WorkoutDetailFragment.newInstance(workoutId, workoutTitle);
         getSupportFragmentManager()

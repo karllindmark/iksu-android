@@ -107,5 +107,11 @@
     <string name="label_debug">Felsökning</string>
     <string name="label_debug_reset_token">Nollställ API-nyckel</string>
     <string name="label_class_started">Passet har redan börjat</string>
+    <string name="label_monitor_q">Bevaka?</string>
     <string name="release_b">Biceps-releasen</string>
+    <string name="label_monitoring">Bevakar</string>
+    <string name="label_checked_in">Incheckad</string>
+    <string name="label_check_in_q">Checka in?</string>
+    <string name="msg_location_permission_rationale">Appen behöver tillgång till din position för att veta om du befinner dig på IKSU</string>
+    <string name="msg_already_checkedin">Du har redan checkat in</string>
 </resources>

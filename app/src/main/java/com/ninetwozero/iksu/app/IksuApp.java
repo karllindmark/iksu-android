@@ -7,11 +7,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.ninetwozero.iksu.R;
+import com.ninetwozero.iksu.database.migrations.IksuDatabaseMigration;
 import com.ninetwozero.iksu.models.UserAccount;
 import com.ninetwozero.iksu.network.IksuApi;
 import com.ninetwozero.iksu.network.WorkoutMoshiAdapter;
@@ -20,10 +22,14 @@ import com.ninetwozero.iksu.network.interceptors.LoginSessionInterceptor;
 import com.ninetwozero.iksu.utils.Constants;
 import com.squareup.moshi.Moshi;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
@@ -43,8 +49,9 @@ public class IksuApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm.init(this);
         AndroidThreeTen.init(this);
+        Realm.init(this);
+        Realm.setDefaultConfiguration(createRealmConfiguration());
 
         applicationContext = this;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(IksuApp.getContext());
@@ -68,6 +75,13 @@ public class IksuApp extends Application {
         setupUuid();
     }
 
+    private RealmConfiguration createRealmConfiguration() {
+        return new RealmConfiguration.Builder()
+            .schemaVersion(1)
+            .migration(new IksuDatabaseMigration())
+            .build();
+    }
+
     public static IksuApi getApi() {
         if (api == null) {
             api = new Retrofit.Builder()
@@ -89,6 +103,14 @@ public class IksuApp extends Application {
 
     private static OkHttpClient createOkHttpClient() {
         return new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        final Response response = chain.proceed(chain.request());
+                        Log.d("YOLO", "RESPONSE:\n" + response.peekBody(1024).string());
+                        return response;
+                    }
+                })
                 .addInterceptor(new ApiTokenInterceptor())
                 .addInterceptor(new LoginSessionInterceptor())
                 .build();

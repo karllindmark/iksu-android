@@ -131,4 +131,18 @@
     <string name="x_by_y">%1$s by %2$s</string>
     <string name="msg_account_disabled">Account \'%1$s\' has been disabled</string>
     <string name="msg_activating_devmode">Activating developer mode</string>
+    <string name="label_monitor_q">Monitor?</string>
+    <string name="label_monitoring">Monitoring</string>
+    <string name="label_checked_in">Checked in</string>
+    <string name="label_check_in_q">Check in?</string>
+    <string name="msg_location_permission_rationale">This app needs to access your location to determine if you\'re currently at an IKSU facility</string>
+    <string name="msg_already_checkedin">You\'ve already checked in</string>
+    <string name="msg_checkin_failed">Unable to check-in - are you really at %1$s?</string>
+    <string name="msg_error_no_gps">Unable to figure out where you are</string>
+    <string name="msg_checkin_ok">Checked-in!</string>
+    <string name="msg_error_general">An unknown error occured</string>
+    <string name="msg_error_not_logged_in">You\'re not logged in</string>
+    <string name="msg_error_checkin_failed">Too early to check-in</string>
+    <string name="msg_error_already_checkedin">Already checked-in</string>
+    <string name="msg_error_iksu_backend">IKSU is down :(</string>
 </resources>
