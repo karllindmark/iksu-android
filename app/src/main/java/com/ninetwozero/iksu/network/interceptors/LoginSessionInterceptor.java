@@ -37,6 +37,7 @@ public class LoginSessionInterceptor implements Interceptor {
                 }
             } catch (JsonDataException ignored) {}
 
+            // TODO: Check for UserCardLocked
             if (responseIsErrorObject) {
                 final Realm realm = Realm.getDefaultInstance();
                 if ("UserNotLoggedIn".equals(errorObject.getKey())) {

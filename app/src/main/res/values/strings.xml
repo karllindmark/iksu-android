@@ -146,4 +146,5 @@
     <string name="msg_error_already_checkedin">Already checked-in</string>
     <string name="msg_error_iksu_backend">IKSU is down :(</string>
     <string name="label_debug_test_checkin">Test check-in</string>
+    <string name="msg_error_card_locked">Your card has been locked</string>
 </resources>

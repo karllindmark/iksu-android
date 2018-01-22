@@ -20,6 +20,8 @@ public class ApiHelper {
 
     public static int getStringResourceForErrorType(final String key) {
         switch (key) {
+            case "UserCardLocked":
+                return R.string.msg_error_card_locked;
             case "UserNotLoggedIn":
                 return R.string.msg_error_not_logged_in;
             case "ClassCantCheckIn":
