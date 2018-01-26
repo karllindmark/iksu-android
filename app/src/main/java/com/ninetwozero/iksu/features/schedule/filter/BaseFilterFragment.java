@@ -86,7 +86,7 @@ abstract public class BaseFilterFragment extends BaseListFragment<ScheduleFilter
 
     @Override
     protected void createAdapter() {
-        adapter = new ScheduleFilterAdapter(getActivity(), getFilterItems(), getListSelectionCallback());
+        adapter = new ScheduleFilterAdapter(getActivity(), prepareListDataItems(), getListSelectionCallback());
     }
 
     @Override
@@ -136,6 +136,6 @@ abstract public class BaseFilterFragment extends BaseListFragment<ScheduleFilter
         return items;
     }
 
-    protected abstract List<ScheduleFilterItem> getFilterItems();
+    protected abstract List<ScheduleFilterItem> prepareListDataItems();
 }
 

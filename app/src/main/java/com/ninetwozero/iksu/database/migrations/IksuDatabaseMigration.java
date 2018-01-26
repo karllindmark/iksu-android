@@ -18,8 +18,7 @@ public class IksuDatabaseMigration implements RealmMigration {
 
     private void migrateSchemaFrom0To1(final RealmSchema schema) {
         schema.get("Workout")
-            .addField("monitoring", boolean.class)
-            .addField("checkedIn", boolean.class);
+            .addField(Constants.MONITORING, boolean.class)
             .addField(Constants.CHECKED_IN, boolean.class);
     }
 }

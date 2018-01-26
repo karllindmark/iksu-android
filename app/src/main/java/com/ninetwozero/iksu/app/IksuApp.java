@@ -1,10 +1,14 @@
 package com.ninetwozero.iksu.app;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -73,6 +77,28 @@ public class IksuApp extends Application {
 
         }
         setupUuid();
+        setupNotificationChannels();
+    }
+
+    private void setupNotificationChannels() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+
+        final NotificationChannel notificationChannel = new NotificationChannel(
+            Constants.NOTIFICATION_MONITOR,
+            "Monitored workouts",
+            NotificationManager.IMPORTANCE_HIGH
+        );
+
+        notificationChannel.setDescription("Used to notify you about available spots on monitored workouts");
+        notificationChannel.setShowBadge(true);
+        notificationChannel.enableLights(true);
+        notificationChannel.enableVibration(true);
+        notificationChannel.setLightColor(Color.CYAN);
+        notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(notificationChannel);
+
     }
 
     private RealmConfiguration createRealmConfiguration() {

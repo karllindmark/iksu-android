@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.ninetwozero.iksu.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 
 public abstract class BaseListFragment<D, T extends RecyclerView.Adapter> extends BaseFragment {
@@ -41,8 +44,9 @@ public abstract class BaseListFragment<D, T extends RecyclerView.Adapter> extend
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_base_list, container, false);
+        return inflater.inflate(getLayoutResource(), container, false);
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -139,13 +143,26 @@ public abstract class BaseListFragment<D, T extends RecyclerView.Adapter> extend
     }
 
     private void setupSwipeRefreshLayout() {
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryLight, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                reloadList();
-            }
-        });
+        if (isRefreshEnabled()) {
+            swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryLight, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    reloadList();
+                }
+            });
+            swipeRefreshLayout.setEnabled(true);
+        } else {
+            swipeRefreshLayout.setEnabled(false);
+        }
+    }
+
+    protected boolean isRefreshEnabled() {
+        return true;
+    }
+
+    protected int getLayoutResource() {
+        return R.layout.fragment_base_list;
     }
 
     protected void reconfigureListDataSource() {
@@ -153,5 +170,8 @@ public abstract class BaseListFragment<D, T extends RecyclerView.Adapter> extend
     }
 
     protected abstract void createAdapter();
+    protected List<D> prepareListDataItems() {
+        return new ArrayList<>();
+    }
     protected abstract void reloadList();
 }

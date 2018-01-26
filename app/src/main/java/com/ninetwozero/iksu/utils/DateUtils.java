@@ -47,4 +47,8 @@ public class DateUtils {
     public static long countDaysBetween(Temporal from, Temporal to) {
         return ChronoUnit.DAYS.between(from, to);
     }
+
+    public static String getTime(long timestamp) {
+        return DateTimeFormatter.ISO_TIME.format(Instant.ofEpochMilli(timestamp));
+    }
 }

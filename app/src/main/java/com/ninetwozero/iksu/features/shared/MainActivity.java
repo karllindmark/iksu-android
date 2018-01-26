@@ -29,6 +29,7 @@ import com.ninetwozero.iksu.features.about.AboutActivity;
 import com.ninetwozero.iksu.features.accounts.LoginActivity;
 import com.ninetwozero.iksu.features.accounts.ManageAccountsActivity;
 import com.ninetwozero.iksu.features.debug.DebugActivity;
+import com.ninetwozero.iksu.features.schedule.listing.MonitoredWorkoutFragment;
 import com.ninetwozero.iksu.features.schedule.listing.WeeklyScheduleFragment;
 import com.ninetwozero.iksu.features.schedule.reservation.ReservationTabFragment;
 import com.ninetwozero.iksu.models.ApiSession;
@@ -309,6 +310,10 @@ public class MainActivity extends BaseActivity {
                 data.putBoolean(IksuWorkoutService.ONLY_RELEVANT_TO_LOGIN, IksuApp.hasSelectedAccount());
                 break;
 
+            case R.id.menu_monitored_classes:
+                fragment = new MonitoredWorkoutFragment();
+                break;
+
             case R.id.menu_about:
                 intent = new Intent(getApplicationContext(), AboutActivity.class);
                 break;
@@ -360,6 +365,7 @@ public class MainActivity extends BaseActivity {
 
         if (!IksuApp.hasSelectedAccount()) {
             menu.findItem(R.id.menu_reservations).setVisible(false);
+            menu.findItem(R.id.menu_monitored_classes).setVisible(false);
         }
 
         if (!IksuApp.hasEnabledDeveloperMode()) {

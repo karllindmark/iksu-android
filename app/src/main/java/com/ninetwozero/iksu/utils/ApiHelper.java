@@ -10,6 +10,13 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 public class ApiHelper {
+    public static final String ERROR_CARD_LOCKED = "UserCardLocked";
+    public static final String ERROR_INVALID_SESSION = "UserNotLoggedIn";
+    public static final String ERROR_CHECKIN_TOO_EARLY = "ClassCantCheckIn";
+    public static final String ERROR_CHECKIN_ALREADY_DONE = "ClassAlreadyCheckedIn";
+    public static final String ERROR_API_500 = "SystemsOverBurdened";
+    public static final String ERROR_API_NETWORK = "NetworkError";
+
     public static String buildGravatarUrl(final String email, final int size) {
         return "https://www.gravatar.com/avatar/" + generateMd5(email) + "?s=" + size  + "&d=404";
     }
@@ -20,26 +27,19 @@ public class ApiHelper {
 
     public static int getStringResourceForErrorType(final String key) {
         switch (key) {
-            case "UserCardLocked":
+            case ERROR_CARD_LOCKED:
                 return R.string.msg_error_card_locked;
-            case "UserNotLoggedIn":
+            case ERROR_INVALID_SESSION:
                 return R.string.msg_error_not_logged_in;
-            case "ClassCantCheckIn":
+            case ERROR_CHECKIN_TOO_EARLY:
                 return R.string.msg_error_checkin_failed;
-            case "ClassAlreadyCheckedIn":
+            case ERROR_CHECKIN_ALREADY_DONE:
                 return R.string.msg_error_already_checkedin;
-            case "SystemsOverBurdened":
-            case "NetworkError":
+            case ERROR_API_500:
+            case ERROR_API_NETWORK:
                 return R.string.msg_error_iksu_backend;
             default:
                 return R.string.msg_error_general;
-
-// Known errors codes:
-// - UserNotLoggedIn (Invalid session)
-// -  (Too early to check-in?)
-// -  (<--)
-// - SystemsOverBurdened (Vaj-Sing on the line)
-// - NetworkError (---^^---)
         }
     }
 

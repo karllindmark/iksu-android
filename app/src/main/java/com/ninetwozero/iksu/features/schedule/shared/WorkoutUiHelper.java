@@ -83,7 +83,10 @@ public class WorkoutUiHelper {
     }
 
     public boolean shouldShowTheSecondayAction(Workout workout) {
-        return (workout.hasReservation() && !workout.hasCheckedIn());
+        return (
+            (workout.isFullyBooked() && workout.isOpenForReservations() && !workout.hasReservation()) ||
+                (workout.hasReservation() && !workout.hasCheckedIn())
+        );
     }
 
     public int getTitleForFilter(final String id, final int type) {

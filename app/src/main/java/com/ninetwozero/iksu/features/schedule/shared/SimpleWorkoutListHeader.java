@@ -1,9 +1,9 @@
-package com.ninetwozero.iksu.features.schedule.reservation;
+package com.ninetwozero.iksu.features.schedule.shared;
 
-class ReservationListHeader implements ReservationListItem{
+public class SimpleWorkoutListHeader implements WorkoutListItem {
     private String title;
 
-    public ReservationListHeader(final String title) {
+    public SimpleWorkoutListHeader(final String title) {
         this.title = title;
     }
 

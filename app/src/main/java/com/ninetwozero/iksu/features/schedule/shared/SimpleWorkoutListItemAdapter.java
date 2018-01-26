@@ -1,4 +1,4 @@
-package com.ninetwozero.iksu.features.schedule.reservation;
+package com.ninetwozero.iksu.features.schedule.shared;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -11,19 +11,18 @@ import android.view.ViewGroup;
 import com.ninetwozero.iksu.BR;
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.features.schedule.listing.WorkoutListCallbacks;
-import com.ninetwozero.iksu.features.schedule.shared.WorkoutUiHelper;
 import com.ninetwozero.iksu.models.Workout;
 
 import java.util.List;
 
-public class ReservationListAdapter extends RecyclerView.Adapter<ReservationListAdapter.ViewHolder> {
+public class SimpleWorkoutListItemAdapter extends RecyclerView.Adapter<SimpleWorkoutListItemAdapter.ViewHolder> {
     private final Context context;
-    private List<ReservationListItem> items;
+    private List<WorkoutListItem> items;
     private LayoutInflater layoutInflater;
     private final WorkoutListCallbacks listCallbacks;
     private final WorkoutUiHelper workoutUiHelper = new WorkoutUiHelper();
 
-    public ReservationListAdapter(final Context context, final WorkoutListCallbacks callbacks, final List<ReservationListItem> items) {
+    public SimpleWorkoutListItemAdapter(final Context context, final WorkoutListCallbacks callbacks, final List<WorkoutListItem> items) {
         this.context = context;
         this.items = items;
         this.listCallbacks = callbacks;
@@ -37,7 +36,7 @@ public class ReservationListAdapter extends RecyclerView.Adapter<ReservationList
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(DataBindingUtil.inflate(layoutInflater, viewType == ReservationListItem.HEADER ? R.layout.list_section_row: R.layout.list_item_reservation, parent, false), viewType);
+        return new ViewHolder(DataBindingUtil.inflate(layoutInflater, viewType == WorkoutListItem.HEADER ? R.layout.list_section_row: R.layout.list_item_schedule_overview, parent, false), viewType);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class ReservationListAdapter extends RecyclerView.Adapter<ReservationList
         return items.size();
     }
 
-    public void setItems(List<ReservationListItem> items) {
+    public void setItems(List<WorkoutListItem> items) {
         this.items = items;
         notifyItemRangeChanged(0, items.size());
         listCallbacks.onItemCountChanged(items.size());
@@ -63,28 +62,28 @@ public class ReservationListAdapter extends RecyclerView.Adapter<ReservationList
                 super(binding.getRoot());
                 this.binding = binding;
 
-                if (listCallbacks != null && type == ReservationListItem.RESERVATION) {
+                if (listCallbacks != null && type == WorkoutListItem.ITEM) {
                     this.binding.setVariable(com.ninetwozero.iksu.BR.handler, listCallbacks);
                 }
             }
 
-            public void bind(ReservationListItem reservationListItem) {
-                if (reservationListItem.getItemType() == ReservationListItem.HEADER) {
-                    bindHeader((ReservationListHeader) reservationListItem);
+            public void bind(WorkoutListItem workoutListItem) {
+                if (workoutListItem.getItemType() == WorkoutListItem.HEADER) {
+                    bindHeader((SimpleWorkoutListHeader) workoutListItem);
                 } else {
-                    bindReservationRow((Workout) reservationListItem);
+                    bindItemRow((Workout) workoutListItem);
                 }
                 binding.executePendingBindings();
             }
 
-            private void bindHeader(ReservationListHeader header) {
+            private void bindHeader(SimpleWorkoutListHeader header) {
                 binding.setVariable(BR.title, header.getTitle());
             }
 
-            private void bindReservationRow(Workout reservation) {
-                binding.setVariable(com.ninetwozero.iksu.BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(context, reservation));
-                binding.setVariable(com.ninetwozero.iksu.BR.statusTint, ContextCompat.getColor(context, workoutUiHelper.getColorForStatusBadge(reservation)));
-                binding.setVariable(BR.workout, reservation);
+            private void bindItemRow(Workout workout) {
+                binding.setVariable(com.ninetwozero.iksu.BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(context, workout));
+                binding.setVariable(com.ninetwozero.iksu.BR.statusTint, ContextCompat.getColor(context, workoutUiHelper.getColorForStatusBadge(workout)));
+                binding.setVariable(BR.workout, workout);
             }
         }
     }

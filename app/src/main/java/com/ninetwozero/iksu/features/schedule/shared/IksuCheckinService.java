@@ -1,4 +1,4 @@
-package com.ninetwozero.iksu.features.schedule.reservation;
+package com.ninetwozero.iksu.features.schedule.shared;
 
 import android.content.Context;
 import android.content.Intent;

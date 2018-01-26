@@ -1,12 +1,12 @@
 package com.ninetwozero.iksu.models;
 
-import com.ninetwozero.iksu.features.schedule.reservation.ReservationListItem;
+import com.ninetwozero.iksu.features.schedule.shared.WorkoutListItem;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 // TODO: How the hell did this interface implements get here???
-public class Workout extends RealmObject implements ReservationListItem {
+public class Workout extends RealmObject implements WorkoutListItem {
     @PrimaryKey
     private String pkId;
     private String id;
@@ -342,7 +342,7 @@ public class Workout extends RealmObject implements ReservationListItem {
 
     @Override
     public int getItemType() {
-        return RESERVATION;
+        return ITEM;
     }
 
 }

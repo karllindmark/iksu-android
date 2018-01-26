@@ -28,6 +28,7 @@ public class Constants {
     public static final String TYPE = "type";
     public static final String SESSION_ID = "sessionId";
     public static final String RESERVATION_ID = "reservationId";
+    public static final String MONITORING = "monitoring";
     public static final String CHECKED_IN = "checkedIn";
 
     public static final String LOCATION_IKSU_SPORT = "facility_sport";
@@ -36,4 +37,5 @@ public class Constants {
 
     public static final String RATE_APP = "RATE_APP";
     public static final String DEVELOPER_MODE = "has_activated_developer_mode";
+    public static final String NOTIFICATION_MONITOR = "monitor_notifications";
 }

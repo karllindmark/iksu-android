@@ -40,7 +40,8 @@ import com.ninetwozero.iksu.common.ui.BaseFragment;
 import com.ninetwozero.iksu.features.accounts.LoginActivity;
 import com.ninetwozero.iksu.features.schedule.listing.WorkoutListAdapter;
 import com.ninetwozero.iksu.features.schedule.listing.WorkoutListCallbacks;
-import com.ninetwozero.iksu.features.schedule.reservation.IksuCheckinService;
+import com.ninetwozero.iksu.features.schedule.shared.IksuCheckinService;
+import com.ninetwozero.iksu.features.schedule.shared.WorkoutMonitorHelper;
 import com.ninetwozero.iksu.features.schedule.shared.WorkoutUiHelper;
 import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.network.IksuLocationService;
@@ -53,6 +54,7 @@ import com.ninetwozero.iksu.utils.DateUtils;
 
 import butterknife.BindView;
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.Sort;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -277,6 +279,10 @@ public class WorkoutDetailFragment extends BaseFragment {
     }
 
     private void onWorkoutChangedCallback(final Workout updatedWorkout) {
+        if (!updatedWorkout.isValid()) {
+            return;
+        }
+
         viewbinding.setVariable(BR.workout, updatedWorkout);
         viewbinding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(getContext(), updatedWorkout, false));
         viewbinding.setVariable(BR.showSecondaryAction, workoutUiHelper.shouldShowTheSecondayAction(updatedWorkout));
@@ -284,6 +290,16 @@ public class WorkoutDetailFragment extends BaseFragment {
         viewbinding.setVariable(BR.statusTint, ContextCompat.getColor(getContext(), workoutUiHelper.getColorForStatusBadge(updatedWorkout)));
         viewbinding.executePendingBindings();
         swipeRefreshLayout.setRefreshing(false);
+
+        if (updatedWorkout.isMonitoring() && updatedWorkout.hasReservation()){
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    updatedWorkout.setMonitoring(false);
+                }
+            });
+            new WorkoutMonitorHelper(getActivity()).unschedule(updatedWorkout);
+        }
     }
 
     public class ScheduleDetailHandler {
@@ -311,10 +327,8 @@ public class WorkoutDetailFragment extends BaseFragment {
             final String text = ((Button) view).getText().toString();
             if (text.equals(getString(R.string.label_check_in_q))) {
                 startCheckInFlow(workout);
-            } else if (text.equals(getString(R.string.label_monitor_q))) {
-                Toast.makeText(getContext(), "Start monitoring " + workout.getTitle(), Toast.LENGTH_SHORT).show();
-            } else if (text.equals(getString(R.string.label_monitoring))) {
-                Toast.makeText(getContext(), "Stop monitoring " + workout.getTitle(), Toast.LENGTH_SHORT).show();
+            } else {
+                toggleMonitoring(workout);
             }
         }
 
@@ -331,6 +345,34 @@ public class WorkoutDetailFragment extends BaseFragment {
                 ACCESS_FINE_LOCATION_REQUEST,
                 Manifest.permission.ACCESS_FINE_LOCATION
             );
+        }
+
+        private void toggleMonitoring(final Workout workout) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    workout.setMonitoring(!workout.isMonitoring());
+                    if (workout.isMonitoring()) {
+                        scheduleMonitoring();
+                    } else {
+                        unscheduleMonitoring();
+                    }
+                    Snackbar.make(
+                        getView(),
+                        (workout.isMonitoring() ? "Start monitoring " : "Stop monitoring " ) + workout.getTitle(),
+                        Toast.LENGTH_SHORT
+                    ).show();
+                }
+            });
+
+        }
+
+        private void scheduleMonitoring() {
+            new WorkoutMonitorHelper(getActivity()).schedule(workout);
+        }
+
+        private void unscheduleMonitoring() {
+            new WorkoutMonitorHelper(getActivity()).unschedule(workout);
         }
 
         private void promptToSignIn(final Workout workout) {

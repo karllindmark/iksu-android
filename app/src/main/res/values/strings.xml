@@ -145,6 +145,9 @@
     <string name="msg_error_checkin_failed">Too early to check-in</string>
     <string name="msg_error_already_checkedin">Already checked-in</string>
     <string name="msg_error_iksu_backend">IKSU is down :(</string>
+    <string name="label_notification_slots_available">Slots available at IKSU</string>
+    <string name="label_monitored_workouts">Monitored workouts</string>
     <string name="label_debug_test_checkin">Test check-in</string>
     <string name="msg_error_card_locked">Your card has been locked</string>
+    <string name="msg_no_monitored_workouts">You aren\'t monitoring any workouts</string>
 </resources>

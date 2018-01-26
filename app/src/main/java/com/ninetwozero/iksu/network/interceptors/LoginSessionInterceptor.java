@@ -37,10 +37,21 @@ public class LoginSessionInterceptor implements Interceptor {
                 }
             } catch (JsonDataException ignored) {}
 
-            // TODO: Check for UserCardLocked
             if (responseIsErrorObject) {
                 final Realm realm = Realm.getDefaultInstance();
-                if ("UserNotLoggedIn".equals(errorObject.getKey())) {
+                if (ApiHelper.ERROR_CARD_LOCKED.equals(errorObject.getKey())) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            final UserAccount account = realm.where(UserAccount.class)
+                                .equalTo(Constants.USERNAME, IksuApp.getActiveUsername())
+                                .findFirst();
+
+                            account.setSession(null);
+                            account.setDisabled(true);
+                        }
+                    });
+                } else if (ApiHelper.ERROR_INVALID_SESSION.equals(errorObject.getKey())) {
                     UserAccount account = realm.where(UserAccount.class).equalTo(Constants.USERNAME, IksuApp.getActiveUsername()).findFirst();
                     if (account != null) {
                         final String oldSessionId = account.getSessionId();
@@ -66,6 +77,7 @@ public class LoginSessionInterceptor implements Interceptor {
                     }
                 }
                 realm.close();
+                // TODO: Can we abort the request somehow?
                 return chain.proceed(request);
             }
             return response;

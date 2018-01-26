@@ -21,7 +21,7 @@ import com.ninetwozero.iksu.BuildConfig;
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.common.ui.BaseSecondaryActivity;
-import com.ninetwozero.iksu.features.schedule.reservation.IksuCheckinService;
+import com.ninetwozero.iksu.features.schedule.shared.IksuCheckinService;
 import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.DateUtils;
@@ -40,7 +40,6 @@ import butterknife.ButterKnife;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
-import io.realm.RealmResults;
 import io.realm.Sort;
 
 
