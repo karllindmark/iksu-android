@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="changelog_v_abdominal">The initial release! You can read all about the various classes/workouts available, as well as sign in to actually book them.\n\nEnjoy!</string>
+    <string name="changelog_v_biceps">The second release! The UI has been touched-up in places, and various bugs have been squashed.\n\nEnjoy!</string>
 </resources>

@@ -16,6 +16,10 @@ import com.ninetwozero.iksu.common.ui.BaseListFragment;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailActivity;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment;
 import com.ninetwozero.iksu.features.schedule.listing.WorkoutListCallbacks;
+import com.ninetwozero.iksu.features.schedule.shared.SimpleListItemDivider;
+import com.ninetwozero.iksu.features.schedule.shared.SimpleWorkoutListHeader;
+import com.ninetwozero.iksu.features.schedule.shared.SimpleWorkoutListItemAdapter;
+import com.ninetwozero.iksu.features.schedule.shared.WorkoutListItem;
 import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.network.IksuWorkoutService;
 import com.ninetwozero.iksu.utils.Constants;
@@ -31,7 +35,7 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class ReservationListFragment extends BaseListFragment<ReservationListItem, ReservationListAdapter> {
+public class ReservationListFragment extends BaseListFragment<WorkoutListItem, SimpleWorkoutListItemAdapter> {
     private static final String ONLY_COMPLETED = "showOnlyCompleted";
 
     private boolean shouldOnlyShowCompleted;
@@ -66,18 +70,19 @@ public class ReservationListFragment extends BaseListFragment<ReservationListIte
 
     @Override
     protected void createAdapter() {
-        final List<ReservationListItem> items = getReservationsAsPreparedList(shouldOnlyShowCompleted);
-        adapter = new ReservationListAdapter(
+        adapter = new SimpleWorkoutListItemAdapter(
             getContext(),
             new WorkoutListCallbacks() {
                 @Override
                 public void onWorkoutClick(View view, Workout workout) {
                     // TODO: Refresh when we come back from the detail view? Fake news if we don't remove "unreserved" workuouts
-                    startActivity(
-                        new Intent(getContext(), WorkoutDetailActivity.class)
-                            .putExtra(WorkoutDetailFragment.WORKOUT_ID, workout.getId())
-                            .putExtra(WorkoutDetailFragment.WORKOUT_TITLE, workout.getTitle())
-                    );
+                    if (!shouldOnlyShowCompleted) {
+                        startActivity(
+                            new Intent(getContext(), WorkoutDetailActivity.class)
+                                .putExtra(WorkoutDetailFragment.WORKOUT_ID, workout.getId())
+                                .putExtra(WorkoutDetailFragment.WORKOUT_TITLE, workout.getTitle())
+                        );
+                    }
                 }
 
                 @Override
@@ -85,13 +90,13 @@ public class ReservationListFragment extends BaseListFragment<ReservationListIte
                     setUiState(count > 0 ? STATE_NORMAL : STATE_EMPTY, R.string.msg_no_reservations);
                 }
             },
-            items
+            prepareListDataItems()
         );
     }
 
     @Override
     protected RecyclerView.ItemDecoration createListItemDivider() {
-        return new ReservationListItemDivider(getContext());
+        return new SimpleListItemDivider(getContext());
     }
 
     @Override
@@ -99,15 +104,16 @@ public class ReservationListFragment extends BaseListFragment<ReservationListIte
         getActivity().startService(IksuWorkoutService.newIntent(getContext(), IksuWorkoutService.ACTION, true));
     }
 
-    private List<ReservationListItem> getReservationsAsPreparedList(final boolean showCompleted) {
-        final List<ReservationListItem> listItems = new ArrayList<>();
+    @Override
+    protected List<WorkoutListItem> prepareListDataItems() {
+        final List<WorkoutListItem> listItems = new ArrayList<>();
 
         final RealmQuery<Workout> query = realm.where(Workout.class)
             .equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername())
             .notEqualTo(Constants.RESERVATION_ID, 0);
 
         final long now = DateUtils.nowInMillis();
-        if (showCompleted) {
+        if (shouldOnlyShowCompleted) {
             query.lessThan(Constants.END_DATE, now);
         } else {
             query.greaterThan(Constants.START_DATE, now);
@@ -118,7 +124,7 @@ public class ReservationListFragment extends BaseListFragment<ReservationListIte
         for (Workout reservation : reservations) {
             if (!date.equals(reservation.getStartDateString().substring(0, 10))) {
                 date = reservation.getStartDateString().substring(0, 10);
-                listItems.add(new ReservationListHeader(DateUtils.getWeekday(getContext(), DateUtils.countDaysBetween(LocalDate.now(), LocalDate.parse(date)))));
+                listItems.add(new SimpleWorkoutListHeader(DateUtils.getWeekday(getContext(), DateUtils.countDaysBetween(LocalDate.now(), LocalDate.parse(date)))));
             }
             listItems.add(reservation);
         }
@@ -139,7 +145,7 @@ public class ReservationListFragment extends BaseListFragment<ReservationListIte
                 if (intent.hasExtra(IksuWorkoutService.STATUS)) {
                     final int count = intent.getIntExtra(IksuWorkoutService.STATUS, WorkoutServiceHelper.RESULT_ERROR);
                     if (count > 0) {
-                        final List<ReservationListItem> reservations = getReservationsAsPreparedList(shouldOnlyShowCompleted);
+                        final List<WorkoutListItem> reservations = prepareListDataItems();
                         adapter.setItems(reservations);
                     } else {
                         setUiState(STATE_EMPTY, R.string.msg_no_reservations);

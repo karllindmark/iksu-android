@@ -17,7 +17,11 @@ public class WorkoutUiHelper {
         }
 
         if (workout.getReservationId() != 0) {
-            return context.getString(R.string.label_reserved);
+            if (workout.hasCheckedIn()) {
+                return context.getString(R.string.label_checked_in);
+            } else {
+                return context.getString(R.string.label_reserved);
+            }
         } else if (workout.isDropin()) {
             return context.getString(R.string.label_dropin);
         } else if (workout.isOpenForReservations()) {
@@ -32,6 +36,57 @@ public class WorkoutUiHelper {
             return context.getString(R.string.label_class_started);
         }
         return context.getString(R.string.empty);
+    }
+
+    public int getColorForStatusBadge(Workout workout) {
+        if (workout != null) {
+            if (workout.getReservationId() != 0) {
+                return R.color.colorAccentLight;
+            } else if (workout.isDropin()) {
+                return R.color.class_state_lt60;
+            } else if (workout.isOpenForReservations()) {
+                if (workout.getTotalSlotCount() > 0) {
+                    final double fraction = workout.getBookedSlotCount() / (workout.getTotalSlotCount() * 1.0f);
+                    if (fraction < 0.75) {
+                        return R.color.class_state_lt60;
+                    } else if (fraction >= 0.75 && fraction < 1) {
+                        return R.color.class_state_lt80;
+                    } else if (fraction >= 1) {
+                        return R.color.darker_grey;
+                    } else {
+                        return R.color.grey;
+                    }
+                }
+            }
+        }
+        return R.color.grey;
+    }
+
+    public int getSecondaryActionTextForWorkout(final Workout workout) {
+        if (workout.hasReservation()) {
+            if (workout.hasCheckedIn()) {
+                return R.string.label_checked_in;
+            } else {
+                return R.string.label_check_in_q;
+            }
+        }
+
+        if (workout.isOpenForReservations()) {
+            if (workout.isMonitoring()) {
+                return R.string.label_monitoring;
+            } else if (workout.isFullyBooked()) {
+                return R.string.label_monitor_q;
+            }
+        }
+
+        return R.string.empty;
+    }
+
+    public boolean shouldShowTheSecondayAction(Workout workout) {
+        return (
+            (workout.isFullyBooked() && workout.isOpenForReservations() && !workout.hasReservation()) ||
+                (workout.hasReservation() && !workout.hasCheckedIn())
+        );
     }
 
     public int getTitleForFilter(final String id, final int type) {
@@ -271,29 +326,5 @@ public class WorkoutUiHelper {
             default:
                 return R.string.todo;
         }
-    }
-
-    public int getColorForStatusBadge(Workout workout) {
-        if (workout != null) {
-            if (workout.getReservationId() != 0) {
-                return R.color.colorAccentLight;
-            } else if (workout.isDropin()) {
-                return R.color.class_state_lt60;
-            } else if (workout.isOpenForReservations()) {
-                if (workout.getTotalSlotCount() > 0) {
-                    double fraction = workout.getBookedSlotCount() / (workout.getTotalSlotCount() * 1.0f);
-                    if (fraction < 0.75) {
-                        return R.color.class_state_lt60;
-                    } else if (fraction >= 0.75 && fraction < 1) {
-                        return R.color.class_state_lt80;
-                    } else if (fraction >= 1) {
-                        return R.color.grey;
-                    } else {
-                        return R.color.grey;
-                    }
-                }
-            }
-        }
-        return R.color.grey;
     }
 }

@@ -18,7 +18,7 @@ public class GeneralFilterFragment extends BaseFilterFragment {
     }
 
     @Override
-    protected List<ScheduleFilterItem> getFilterItems() {
+    protected List<ScheduleFilterItem> prepareListDataItems() {
         final String connectedAccount = IksuApp.getActiveUsername();
         final Map<String, ScheduleFilterItem> activeFilterItems = getActiveFilterItems(connectedAccount, ScheduleFilterItem.ROW_FILTER_LOCATION);
 

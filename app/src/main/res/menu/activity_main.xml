@@ -12,6 +12,11 @@
             android:icon="@drawable/ic_event_black_24dp"
             android:checked="true"
         />
+        <item
+            android:id="@+id/menu_monitored_classes"
+            android:title="@string/label_monitored_workouts"
+            android:icon="@drawable/ic_notifications_black_24dp"
+        />
     </group>
     <group android:id="@+id/default_secondary" android:checkableBehavior="single" android:menuCategory="container" android:orderInCategory="1">
         <item

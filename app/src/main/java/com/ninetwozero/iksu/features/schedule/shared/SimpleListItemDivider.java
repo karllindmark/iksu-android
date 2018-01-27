@@ -1,4 +1,4 @@
-package com.ninetwozero.iksu.features.schedule.reservation;
+package com.ninetwozero.iksu.features.schedule.shared;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,12 +12,12 @@ import android.view.View;
 
 import com.ninetwozero.iksu.utils.DensityUtils;
 
-class ReservationListItemDivider extends ItemDecoration {
+public class SimpleListItemDivider extends ItemDecoration {
     private static final int[] ATTRS = new int[]{ android.R.attr.listDivider };
     private Drawable divider;
     private final Rect bounds = new Rect();
 
-    public ReservationListItemDivider(Context context) {
+    public SimpleListItemDivider(Context context) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         divider = a.getDrawable(0);
         a.recycle();
@@ -64,9 +64,9 @@ class ReservationListItemDivider extends ItemDecoration {
     private boolean shouldDrawDivider(final RecyclerView parent, View child) {
         final int current = parent.getChildAdapterPosition(child);
         return (
-            parent.getAdapter().getItemViewType(current) == ReservationListItem.RESERVATION &&
+            parent.getAdapter().getItemViewType(current) == WorkoutListItem.ITEM &&
             parent.getAdapter().getItemCount() > (current+1) &&
-            parent.getAdapter().getItemViewType(current + 1) == ReservationListItem.RESERVATION
+            parent.getAdapter().getItemViewType(current + 1) == WorkoutListItem.ITEM
         );
     }
 }

@@ -11,6 +11,7 @@ public class Constants {
     public static final String LATEST_AUTO_REFRESH = "latest_auto_refresh";
     public static final String HAS_ACCEPTED_TOS = "has_accepted_tos";
     public static final String HAS_CONFIGURED_KEYSTORE = "has_configured_keystore";
+    public static final String ERROR_KEY = "error_key";
 
     public static final String FILTER_TYPE = "workout_filter_type";
     public static final String FILTER_TIME_OF_DAY = "time_of_day";
@@ -27,6 +28,8 @@ public class Constants {
     public static final String TYPE = "type";
     public static final String SESSION_ID = "sessionId";
     public static final String RESERVATION_ID = "reservationId";
+    public static final String MONITORING = "monitoring";
+    public static final String CHECKED_IN = "checkedIn";
 
     public static final String LOCATION_IKSU_SPORT = "facility_sport";
     public static final String LOCATION_IKSU_SPA = "facility_spa";
@@ -34,4 +37,5 @@ public class Constants {
 
     public static final String RATE_APP = "RATE_APP";
     public static final String DEVELOPER_MODE = "has_activated_developer_mode";
+    public static final String NOTIFICATION_MONITOR = "monitor_notifications";
 }

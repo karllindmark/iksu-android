@@ -25,7 +25,7 @@ public class InstructorFilterFragment extends BaseFilterFragment {
     }
 
     @Override
-    protected List<ScheduleFilterItem> getFilterItems() {
+    protected List<ScheduleFilterItem> prepareListDataItems() {
         final List<ScheduleFilterItem> filterItems = new ArrayList<>();
 
         final String connectedAccount = IksuApp.getActiveUsername();

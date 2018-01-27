@@ -6,6 +6,7 @@
     <color name="colorAccent">#3F51B5</color>
     <color name="colorAccentLight">#40c4ff</color>
     <color name="black">#000000</color>
+    <color name="darker_grey">#777777</color>
     <color name="dark_grey">#999999</color>
     <color name="grey">#CCCCCC</color>
 

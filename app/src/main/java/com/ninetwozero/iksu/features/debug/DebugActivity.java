@@ -1,9 +1,11 @@
 package com.ninetwozero.iksu.features.debug;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -12,11 +14,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.ninetwozero.iksu.BuildConfig;
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.common.ui.BaseSecondaryActivity;
+import com.ninetwozero.iksu.features.schedule.shared.IksuCheckinService;
+import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.DateUtils;
 
@@ -31,6 +37,10 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
+import io.realm.RealmRecyclerViewAdapter;
+import io.realm.Sort;
 
 
 public class DebugActivity extends BaseSecondaryActivity {
@@ -68,8 +78,33 @@ public class DebugActivity extends BaseSecondaryActivity {
         if (item.getItemId() == R.id.menu_reset_api_token) {
             sharedPreferences.edit().remove(Constants.API_TOKEN).remove(Constants.API_TOKEN_EXPIRATION).apply();
             recyclerView.swapAdapter(createAdapter(), true);
+        } else if (item.getItemId() == R.id.menu_test_checkin) {
+            startCheckinTestFlow();
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startCheckinTestFlow() {
+        final DebugWorkoutAdapter debugWorkoutAdapter = new DebugWorkoutAdapter(this, loadFromDatabase());
+        final Dialog dialog = new MaterialDialog.Builder(this)
+            .tag(getString(R.string.label_debug_test_checkin))
+            .title(R.string.label_debug_test_checkin)
+            .adapter(debugWorkoutAdapter, new LinearLayoutManager(this))
+            .build();
+        debugWorkoutAdapter.setDialog(dialog);
+        dialog.show();
+    }
+
+    private OrderedRealmCollection<Workout> loadFromDatabase() {
+        try (Realm realm = Realm.getDefaultInstance()) {
+            return realm.where(Workout.class)
+                .equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername())
+                .greaterThan(Constants.RESERVATION_ID, 0)
+                .equalTo(Constants.CHECKED_IN, false)
+                .greaterThan(Constants.START_DATE, System.currentTimeMillis())
+                .findAllSorted(Constants.START_DATE, Sort.ASCENDING);
+        }
     }
 
     private RecyclerView.Adapter createAdapter() {
@@ -174,6 +209,61 @@ public class DebugActivity extends BaseSecondaryActivity {
         public DebugItem(String text, int type) {
             this.text = text;
             this.type = type;
+        }
+    }
+
+    class DebugWorkoutAdapter extends RealmRecyclerViewAdapter<Workout, DebugWorkoutAdapter.ViewHolder> {
+        private final LayoutInflater layoutInflater;
+        private Dialog dialog;
+
+        public DebugWorkoutAdapter(final Context context, @Nullable OrderedRealmCollection<Workout> data) {
+            super(data, true);
+            this.layoutInflater = LayoutInflater.from(context);
+        }
+
+
+        @Override
+        public DebugWorkoutAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ViewHolder(layoutInflater.inflate(android.R.layout.two_line_list_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(DebugWorkoutAdapter.ViewHolder holder, int position) {
+            holder.bind(getItem(position));
+        }
+
+        public void setDialog(Dialog dialog) {
+            this.dialog = dialog;
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            @BindView(android.R.id.text1)
+            TextView text1;
+            @BindView(android.R.id.text2)
+            TextView text2;
+            public ViewHolder(View view) {
+                super(view);
+                ButterKnife.bind(this, view);
+                view.setClickable(true);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Workout workout = getItem(getAdapterPosition());
+
+                        final Context context = v.getContext();
+                        context.startService(IksuCheckinService.newInstance(context, workout.getPkId()));
+                        Toast.makeText(context, "Trying to check-in " + workout.getTitle() + "...", Toast.LENGTH_SHORT).show();
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+            }
+
+            public void bind(Workout workout) {
+                this.text1.setText(workout.getTitle());
+                this.text2.setText(workout.getStartDateString());
+            }
         }
     }
 }

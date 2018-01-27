@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">Open IKSU</string>
     <string name="app_name_1" translatable="false">Open</string>
     <string name="app_name_2" translatable="false">IKSU</string>
-    <string name="app_current_release" translatable="false">@string/release_a</string>
+    <string name="app_current_release" translatable="false">@string/release_b</string>
     <string name="developer_name" translatable="false">Karl Lindmark</string>
     <string name="developer_email" translatable="false">support@ninetwozero.com</string>
     <string name="developer_title">App Developer</string>
@@ -17,6 +17,7 @@
 
     <!-- Release names -->
     <string name="release_a">The Abdominal release</string>
+    <string name="release_b">The Biceps release</string>
 
     <!-- Labels -->
     <string name="label_full">No slots left</string>
@@ -130,4 +131,23 @@
     <string name="x_by_y">%1$s by %2$s</string>
     <string name="msg_account_disabled">Account \'%1$s\' has been disabled</string>
     <string name="msg_activating_devmode">Activating developer mode</string>
+    <string name="label_monitor_q">Monitor?</string>
+    <string name="label_monitoring">Monitoring</string>
+    <string name="label_checked_in">Checked in</string>
+    <string name="label_check_in_q">Check in?</string>
+    <string name="msg_location_permission_rationale">This app needs to access your location to determine if you\'re currently at an IKSU facility</string>
+    <string name="msg_already_checkedin">You\'ve already checked in</string>
+    <string name="msg_checkin_failed">Unable to check-in - are you really at %1$s?</string>
+    <string name="msg_error_no_gps">Unable to figure out where you are</string>
+    <string name="msg_checkin_ok">Checked-in!</string>
+    <string name="msg_error_general">An unknown error occured</string>
+    <string name="msg_error_not_logged_in">You\'re not logged in</string>
+    <string name="msg_error_checkin_failed">Too early to check-in</string>
+    <string name="msg_error_already_checkedin">Already checked-in</string>
+    <string name="msg_error_iksu_backend">IKSU is down :(</string>
+    <string name="label_notification_slots_available">Slots available at IKSU</string>
+    <string name="label_monitored_workouts">Monitored workouts</string>
+    <string name="label_debug_test_checkin">Test check-in</string>
+    <string name="msg_error_card_locked">Your card has been locked</string>
+    <string name="msg_no_monitored_workouts">You aren\'t monitoring any workouts</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.ninetwozero.iksu.features.schedule.detail;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -38,18 +40,24 @@ import com.ninetwozero.iksu.common.ui.BaseFragment;
 import com.ninetwozero.iksu.features.accounts.LoginActivity;
 import com.ninetwozero.iksu.features.schedule.listing.WorkoutListAdapter;
 import com.ninetwozero.iksu.features.schedule.listing.WorkoutListCallbacks;
+import com.ninetwozero.iksu.features.schedule.shared.IksuCheckinService;
+import com.ninetwozero.iksu.features.schedule.shared.WorkoutMonitorHelper;
 import com.ninetwozero.iksu.features.schedule.shared.WorkoutUiHelper;
 import com.ninetwozero.iksu.models.Workout;
+import com.ninetwozero.iksu.network.IksuLocationService;
 import com.ninetwozero.iksu.network.IksuLoginService;
 import com.ninetwozero.iksu.network.IksuReservationService;
 import com.ninetwozero.iksu.network.IksuWorkoutService;
+import com.ninetwozero.iksu.utils.ApiHelper;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.DateUtils;
 
 import butterknife.BindView;
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.Sort;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.content.Intent.ACTION_VIEW;
 import static android.content.Intent.EXTRA_TEXT;
@@ -61,6 +69,7 @@ public class WorkoutDetailFragment extends BaseFragment {
     public static final String WORKOUT_TITLE = "workoutTitle";
 
     private static final int REQUEST_NESTED = 1001;
+    private static final int ACCESS_FINE_LOCATION_REQUEST = 1002;
 
     @BindView(R.id.toolbar)
     protected Toolbar toolbar;
@@ -72,8 +81,6 @@ public class WorkoutDetailFragment extends BaseFragment {
     protected RecyclerView upcomingClassesList;
     @BindView(R.id.upcoming_classes_empty)
     protected View upcomingClassesEmptyView;
-    @BindView(R.id.event_action)
-    protected Button callToAction;
 
     private ViewDataBinding viewbinding;
     private WorkoutListAdapter upcomingClassesListAdapter;
@@ -87,6 +94,8 @@ public class WorkoutDetailFragment extends BaseFragment {
 
     private final ReservationReceiver reservationReceiver = new ReservationReceiver();
     private final WorkoutReceiver workoutReceiver = new WorkoutReceiver();
+    private final LocationCheckBroadcastReceiver locationCheckBroadcastReceiver = new LocationCheckBroadcastReceiver();
+    private final CheckInBroadcastReceiver checkInBroadcastReceiver = new CheckInBroadcastReceiver();
     private final WorkoutChangeListener workoutChangeListener = new WorkoutChangeListener();
 
     public static WorkoutDetailFragment newInstance(final String workoutId, final String workoutTitle) {
@@ -120,6 +129,8 @@ public class WorkoutDetailFragment extends BaseFragment {
         viewbinding.setVariable(BR.handler, scheduleHandler);
         viewbinding.setVariable(BR.helper, workoutUiHelper);
         viewbinding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(getContext(), workout, false));
+        viewbinding.setVariable(BR.showSecondaryAction, workoutUiHelper.shouldShowTheSecondayAction(workout));
+        viewbinding.setVariable(BR.secondaryActionStringRes, workoutUiHelper.getSecondaryActionTextForWorkout(workout));
         viewbinding.setVariable(BR.statusTint, ContextCompat.getColor(getContext(), workoutUiHelper.getColorForStatusBadge(workout)));
         viewbinding.executePendingBindings();
 
@@ -174,13 +185,21 @@ public class WorkoutDetailFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
     private void setupSimilarClassesView() {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setAutoMeasureEnabled(true);
 
         upcomingClassesListAdapter = new WorkoutListAdapter(
                 getContext(),
-                new ListHandler(),
+                new SimilarSessionsListCallbacks(),
                 loadUpcomingWorkoutsFromDatabase(),
                 true
         );
@@ -233,17 +252,15 @@ public class WorkoutDetailFragment extends BaseFragment {
 
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(reservationReceiver, intentFilter);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(workoutReceiver, new IntentFilter(IksuWorkoutService.ACTION));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(locationCheckBroadcastReceiver, new IntentFilter(IksuLocationService.ACTION_VALIDATE));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(checkInBroadcastReceiver, new IntentFilter(IksuCheckinService.ACTION));
     }
 
     private void removeBroadcastReceivers() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(reservationReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(workoutReceiver);
-    }
-
-    public void onBackPressed() {
-        if (callToAction != null) {
-            callToAction.setText("");
-        }
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(locationCheckBroadcastReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(checkInBroadcastReceiver);
     }
 
     private void onUserLoggedInToReserve() {
@@ -262,19 +279,39 @@ public class WorkoutDetailFragment extends BaseFragment {
     }
 
     private void onWorkoutChangedCallback(final Workout updatedWorkout) {
+        if (!updatedWorkout.isValid()) {
+            return;
+        }
+
         viewbinding.setVariable(BR.workout, updatedWorkout);
         viewbinding.setVariable(BR.actionStringRes, workoutUiHelper.getActionTextForWorkout(getContext(), updatedWorkout, false));
+        viewbinding.setVariable(BR.showSecondaryAction, workoutUiHelper.shouldShowTheSecondayAction(updatedWorkout));
+        viewbinding.setVariable(BR.secondaryActionStringRes, workoutUiHelper.getSecondaryActionTextForWorkout(updatedWorkout));
         viewbinding.setVariable(BR.statusTint, ContextCompat.getColor(getContext(), workoutUiHelper.getColorForStatusBadge(updatedWorkout)));
         viewbinding.executePendingBindings();
         swipeRefreshLayout.setRefreshing(false);
+
+        if (updatedWorkout.isMonitoring() && updatedWorkout.hasReservation()){
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    updatedWorkout.setMonitoring(false);
+                }
+            });
+            new WorkoutMonitorHelper(getActivity()).unschedule(updatedWorkout);
+        }
     }
 
     public class ScheduleDetailHandler {
-        public void onBookingButtonClick(final View view, final Workout workout) {
+        public void onPrimaryActionClick(final View view, final Workout workout) {
             if (workout.getReservationId() != 0) {
-                showCancellationDialog(workout);
+                if (workout.hasCheckedIn()) {
+                    Snackbar.make(getView(), R.string.msg_already_checkedin, Snackbar.LENGTH_LONG).show();
+                } else {
+                    showCancellationDialog(workout);
+                }
             } else if (workout.isDropin()) {
-                Snackbar.make(getView(), R.string.msg_unable_to_reserve_dropin, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(getView(), R.string.msg_unable_to_reserve_dropin, Snackbar.LENGTH_LONG).show();
             } else if (workout.isOpenForReservations() && workout.getBookedSlotCount() < workout.getTotalSlotCount()) {
                 if (IksuApp.hasSelectedAccount()){
                     startBookingFlow(workout);
@@ -282,9 +319,62 @@ public class WorkoutDetailFragment extends BaseFragment {
                     promptToSignIn(workout);
                 }
             } else if (!workout.isOpenForReservations() || workout.getBookedSlotCount() >= workout.getTotalSlotCount()) {
-                Snackbar.make(getView(), R.string.msg_unable_to_reserve_full, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(getView(), R.string.msg_unable_to_reserve_full, Snackbar.LENGTH_LONG).show();
             }
         }
+
+        public void onSecondaryActionClick(final View view, final Workout workout) {
+            final String text = ((Button) view).getText().toString();
+            if (text.equals(getString(R.string.label_check_in_q))) {
+                startCheckInFlow(workout);
+            } else {
+                toggleMonitoring(workout);
+            }
+        }
+
+        private void startCheckInFlow(final Workout workout) {
+            final Activity activity = getActivity();
+            if (EasyPermissions.hasPermissions(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                activity.startService(IksuLocationService.newIntent(activity, workout));
+                return;
+            }
+
+            EasyPermissions.requestPermissions(
+                activity,
+                activity.getString(R.string.msg_location_permission_rationale),
+                ACCESS_FINE_LOCATION_REQUEST,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            );
+        }
+
+        private void toggleMonitoring(final Workout workout) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    workout.setMonitoring(!workout.isMonitoring());
+                    if (workout.isMonitoring()) {
+                        scheduleMonitoring();
+                    } else {
+                        unscheduleMonitoring();
+                    }
+                    Snackbar.make(
+                        getView(),
+                        (workout.isMonitoring() ? "Start monitoring " : "Stop monitoring " ) + workout.getTitle(),
+                        Toast.LENGTH_SHORT
+                    ).show();
+                }
+            });
+
+        }
+
+        private void scheduleMonitoring() {
+            new WorkoutMonitorHelper(getActivity()).schedule(workout);
+        }
+
+        private void unscheduleMonitoring() {
+            new WorkoutMonitorHelper(getActivity()).unschedule(workout);
+        }
+
         private void promptToSignIn(final Workout workout) {
             new MaterialDialog.Builder(getContext())
                     .title(R.string.msg_sign_in_dialog_title)
@@ -339,7 +429,7 @@ public class WorkoutDetailFragment extends BaseFragment {
         return new Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(EXTRA_TEXT, createIksuUrl(workout));
     }
 
-    private class ListHandler implements WorkoutListCallbacks {
+    private class SimilarSessionsListCallbacks implements WorkoutListCallbacks {
         public void onWorkoutClick(final View view, final Workout workout) {
             final Intent intent = new Intent(getContext(), WorkoutDetailActivity.class);
             intent.putExtra(WorkoutDetailFragment.WORKOUT_ID, workout.getId());
@@ -389,7 +479,7 @@ public class WorkoutDetailFragment extends BaseFragment {
             final String action = intent.getAction();
             if (action.equals(IksuReservationService.ACTION_CREATE)) {
                 if (status == IksuReservationService.RESULT_OK) {
-                    Snackbar.make(view, R.string.msg_reservation_completed, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, R.string.msg_reservation_completed, Snackbar.LENGTH_LONG).show();
                 } else if (status == IksuReservationService.RESULT_RESERVATION_ERROR) {
                     Snackbar.make(view, R.string.msg_reservation_error, Snackbar.LENGTH_LONG).show();
                 } else {
@@ -397,7 +487,7 @@ public class WorkoutDetailFragment extends BaseFragment {
                 }
             } else if (action.equals(IksuReservationService.ACTION_CANCEL)) {
                 if (status == IksuReservationService.RESULT_OK) {
-                    Snackbar.make(view, R.string.msg_cancel_reservation_ok, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, R.string.msg_cancel_reservation_ok, Snackbar.LENGTH_LONG).show();
                 } else {
                     Snackbar.make(view, R.string.msg_cancel_reservation_dialog_error_1, Snackbar.LENGTH_INDEFINITE).setAction(R.string.msg_cancel_reservation_dialog_error_2, new View.OnClickListener() {
                         @Override
@@ -406,6 +496,45 @@ public class WorkoutDetailFragment extends BaseFragment {
                         }
                     }).setActionTextColor(ContextCompat.getColor(getContext(), R.color.colorAccentLight)).show();
                 }
+            }
+        }
+    }
+
+    private class LocationCheckBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (IksuLocationService.ACTION_VALIDATE.equals(intent.getAction())) {
+                final int status = intent.getIntExtra(IksuLocationService.STATUS, IksuLocationService.STATUS_NONE);
+                if (status == IksuLocationService.STATUS_VALID) {
+                    getActivity().startService(IksuCheckinService.newInstance(context, workout.getPkId()));
+                } else if (status == IksuLocationService.STATUS_INVALID) {
+                    Snackbar.make(
+                        getView(),
+                        context.getString(R.string.msg_checkin_failed, workout.getFacility()),
+                        Snackbar.LENGTH_LONG
+                    ).show();
+                } else {
+                    Snackbar.make(getView(), R.string.msg_error_no_gps, Snackbar.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    private class CheckInBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (IksuCheckinService.ACTION.equals(intent.getAction())) {
+                final int status = intent.getIntExtra(IksuCheckinService.STATUS, IksuCheckinService.STATUS_CHECKIN_FAILED);
+                if (status == IksuCheckinService.STATUS_CHECKIN_OK) {
+                    Snackbar.make(getView(), R.string.msg_checkin_ok, Snackbar.LENGTH_LONG).show();
+                } else {
+                    Snackbar.make(
+                        getView(),
+                        ApiHelper.getStringResourceForErrorType(intent.getStringExtra(Constants.ERROR_KEY)),
+                        Snackbar.LENGTH_LONG
+                    ).show();
+                }
+
             }
         }
     }

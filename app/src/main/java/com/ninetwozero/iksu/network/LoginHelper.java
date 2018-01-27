@@ -72,7 +72,7 @@ public class LoginHelper {
             } else if (response.code() == 412) {
                 ApiErrorResponse errorResponse = IksuApp.getMoshi().adapter(ApiErrorResponse.class).fromJson(response.errorBody().string());
                 if (errorResponse != null) {
-                    switch (errorResponse.getMessage()) {
+                    switch (errorResponse.getCode()) {
                         case "1024":
                             out = RESULT_FAIL_CREDENTIALS;
                             break;

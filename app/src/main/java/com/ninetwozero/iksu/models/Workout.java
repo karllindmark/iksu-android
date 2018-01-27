@@ -1,12 +1,12 @@
 package com.ninetwozero.iksu.models;
 
-import com.ninetwozero.iksu.features.schedule.reservation.ReservationListItem;
+import com.ninetwozero.iksu.features.schedule.shared.WorkoutListItem;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 // TODO: How the hell did this interface implements get here???
-public class Workout extends RealmObject implements ReservationListItem {
+public class Workout extends RealmObject implements WorkoutListItem {
     @PrimaryKey
     private String pkId;
     private String id;
@@ -43,6 +43,8 @@ public class Workout extends RealmObject implements ReservationListItem {
     private long reservationDeadline;
     private long reservationId;
     private boolean ratedByUser;
+    private boolean monitoring;
+    private boolean checkedIn;
 
     public String getPkId() {
         return pkId;
@@ -260,12 +262,32 @@ public class Workout extends RealmObject implements ReservationListItem {
         this.reservationId = reservationId;
     }
 
+    public boolean hasReservation() {
+        return reservationId != 0;
+    }
+
     public boolean isRatedByUser() {
         return ratedByUser;
     }
 
     public void setRatedByUser(boolean ratedByUser) {
         this.ratedByUser = ratedByUser;
+    }
+
+    public boolean isMonitoring() {
+        return monitoring;
+    }
+
+    public void setMonitoring(boolean monitoring) {
+        this.monitoring = monitoring;
+    }
+
+    public boolean hasCheckedIn() {
+        return checkedIn;
+    }
+
+    public void setCheckedIn(boolean checkedIn) {
+        this.checkedIn = checkedIn;
     }
 
     public String getInstructorNames() {
@@ -278,6 +300,10 @@ public class Workout extends RealmObject implements ReservationListItem {
         } else {
             return "-";
         }
+    }
+
+    public boolean isFullyBooked() {
+        return bookedSlotCount == totalSlotCount;
     }
 
     @Override
@@ -316,6 +342,7 @@ public class Workout extends RealmObject implements ReservationListItem {
 
     @Override
     public int getItemType() {
-        return RESERVATION;
+        return ITEM;
     }
+
 }

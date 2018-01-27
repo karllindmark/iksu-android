@@ -1,10 +1,9 @@
 package com.ninetwozero.iksu.network.interceptors;
 
 import com.ninetwozero.iksu.app.IksuApp;
-import com.ninetwozero.iksu.models.ApiSession;
 import com.ninetwozero.iksu.models.UserAccount;
+import com.ninetwozero.iksu.network.ApiErrorResponse;
 import com.ninetwozero.iksu.network.LoginHelper;
-import com.ninetwozero.iksu.network.dto.GeneralApiErrorResponse;
 import com.ninetwozero.iksu.utils.ApiHelper;
 import com.ninetwozero.iksu.utils.Constants;
 import com.squareup.moshi.JsonDataException;
@@ -28,11 +27,11 @@ public class LoginSessionInterceptor implements Interceptor {
         if (IksuApp.hasSelectedAccount() && !request.url().encodedPath().endsWith("/login")) {
             final Response response = chain.proceed(request);
             boolean responseIsErrorObject = false;
-            GeneralApiErrorResponse errorObject = null;
+            ApiErrorResponse errorObject = null;
             try {
                 responseIsErrorObject = response.peekBody(20).string().matches("\\{\"(Message|message)\":\"([^\"]+)\".*");
                 if (responseIsErrorObject) {
-                    errorObject = IksuApp.getMoshi().adapter(GeneralApiErrorResponse.class).fromJson(
+                    errorObject = IksuApp.getMoshi().adapter(ApiErrorResponse.class).fromJson(
                         response.peekBody(Integer.parseInt(response.header("Content-Length"))).source()
                     );
                 }
@@ -40,7 +39,19 @@ public class LoginSessionInterceptor implements Interceptor {
 
             if (responseIsErrorObject) {
                 final Realm realm = Realm.getDefaultInstance();
-                if ("UserNotLoggedIn".equals(errorObject.getErrorKey())) {
+                if (ApiHelper.ERROR_CARD_LOCKED.equals(errorObject.getKey())) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            final UserAccount account = realm.where(UserAccount.class)
+                                .equalTo(Constants.USERNAME, IksuApp.getActiveUsername())
+                                .findFirst();
+
+                            account.setSession(null);
+                            account.setDisabled(true);
+                        }
+                    });
+                } else if (ApiHelper.ERROR_INVALID_SESSION.equals(errorObject.getKey())) {
                     UserAccount account = realm.where(UserAccount.class).equalTo(Constants.USERNAME, IksuApp.getActiveUsername()).findFirst();
                     if (account != null) {
                         final String oldSessionId = account.getSessionId();
@@ -59,13 +70,14 @@ public class LoginSessionInterceptor implements Interceptor {
                             }
                         } else {
                             realm.beginTransaction();
-                            realm.where(ApiSession.class).equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername()).findAll().deleteAllFromRealm();
+                            realm.where(UserAccount.class).equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername()).findFirst().getSession().deleteFromRealm();
                             account.setDisabled(true);
                             realm.commitTransaction();
                         }
                     }
                 }
                 realm.close();
+                // TODO: Can we abort the request somehow?
                 return chain.proceed(request);
             }
             return response;
