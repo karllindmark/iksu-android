@@ -140,7 +140,7 @@
     <string name="msg_checkin_failed">Unable to check-in - are you really at %1$s?</string>
     <string name="msg_error_no_gps">Unable to figure out where you are</string>
     <string name="msg_checkin_ok">Checked-in!</string>
-    <string name="msg_error_general">An unknown error occured</string>
+    <string name="msg_error_general">An unknown error occurred</string>
     <string name="msg_error_not_logged_in">You\'re not logged in</string>
     <string name="msg_error_checkin_failed">Too early to check-in</string>
     <string name="msg_error_already_checkedin">Already checked-in</string>
@@ -148,6 +148,6 @@
     <string name="label_notification_slots_available">Slots available at IKSU</string>
     <string name="label_monitored_workouts">Monitored workouts</string>
     <string name="label_debug_test_checkin">Test check-in</string>
-    <string name="msg_error_card_locked">Your card has been locked</string>
+    <string name="msg_error_card_locked">Your card is locked :(</string>
     <string name="msg_no_monitored_workouts">You aren\'t monitoring any workouts</string>
 </resources>

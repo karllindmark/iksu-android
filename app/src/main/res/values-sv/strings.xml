@@ -97,7 +97,7 @@
     <string name="label_close">Stäng</string>
     <string name="release_a">Magmuskel-releasen</string>
     <string name="msg_no_accounts">Inga användarkonton hittades - logga in?</string>
-    <string name="msg_downloading_workout">Hämtar passet...</string>
+    <string name="msg_downloading_workout">Hämtar passet…</string>
     <string name="msg_workout_not_found">Passet kunde inte hittas</string>
     <string name="label_share">Dela</string>
     <string name="msg_login_error_blocked">Ditt IKSU-konto verkar har blivit låst.</string>
@@ -114,4 +114,17 @@
     <string name="label_check_in_q">Checka in?</string>
     <string name="msg_location_permission_rationale">Appen behöver tillgång till din position för att veta om du befinner dig på IKSU</string>
     <string name="msg_already_checkedin">Du har redan checkat in</string>
+    <string name="msg_checkin_failed">Kunde inte checka in</string>
+    <string name="msg_error_no_gps">Kunde inte hitta din position</string>
+    <string name="msg_checkin_ok">Incheckad!</string>
+    <string name="msg_error_general">Ett okänt fel har uppstått</string>
+    <string name="msg_error_not_logged_in">Du är inte inloggad</string>
+    <string name="msg_error_checkin_failed">För tidigt att checka in</string>
+    <string name="msg_error_already_checkedin">Redan incheckad</string>
+    <string name="msg_error_iksu_backend">IKSU ligger nere :(</string>
+    <string name="label_notification_slots_available">Lediga platser på IKSU</string>
+    <string name="label_monitored_workouts">Bevakade pass</string>
+    <string name="label_debug_test_checkin">Prova incheckingen</string>
+    <string name="msg_error_card_locked">Ditt konto är låst :(</string>
+    <string name="msg_no_monitored_workouts">Du bevakar inga pass</string>
 </resources>
