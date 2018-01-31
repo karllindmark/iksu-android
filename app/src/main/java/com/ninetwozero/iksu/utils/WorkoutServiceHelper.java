@@ -134,12 +134,15 @@ public class WorkoutServiceHelper {
                 .findFirst();
 
         if (oldWorkout != null) {
-            workout.setReservationId(reservation.getId());
-            workout.setCheckedIn(reservation.isCheckedIn());
             workout.setPkId(workout.getId() + "_" + oldWorkout.getConnectedAccount());
             workout.setConnectedAccount(oldWorkout.getConnectedAccount());
             workout.setRatedByUser(oldWorkout.isRatedByUser());
             workout.setMonitoring(oldWorkout.isMonitoring());
+
+            if (reservation != null) {
+                workout.setReservationId(reservation.getId());
+                workout.setCheckedIn(reservation.isCheckedIn());
+            }
         } else {
             if (IksuApp.hasSelectedAccount()) {
                 workout.setPkId(workout.getId() + "_" + IksuApp.getActiveUsername());
