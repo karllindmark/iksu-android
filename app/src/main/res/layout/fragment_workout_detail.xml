@@ -111,7 +111,7 @@
 
                     <android.support.constraint.ConstraintLayout
                         android:id="@+id/wrap_current"
-                        android:layout_width="411dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@color/colorAccent"
                         android:clickable="true"
@@ -253,7 +253,7 @@
 
                             tools:text="@string/label_monitor_q"
                             />
-                        
+
                         <android.support.constraint.Barrier
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
