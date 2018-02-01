@@ -1,9 +1,14 @@
 package com.ninetwozero.iksu.features.schedule.listing;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -15,6 +20,7 @@ import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.common.ui.BaseListFragment;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailActivity;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment;
+import com.ninetwozero.iksu.features.schedule.shared.IksuMonitorService;
 import com.ninetwozero.iksu.features.schedule.shared.SimpleListItemDivider;
 import com.ninetwozero.iksu.features.schedule.shared.SimpleWorkoutListHeader;
 import com.ninetwozero.iksu.features.schedule.shared.SimpleWorkoutListItemAdapter;
@@ -23,6 +29,7 @@ import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.network.IksuWorkoutService;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.DateUtils;
+import com.ninetwozero.iksu.utils.WorkoutServiceHelper;
 
 import org.threeten.bp.LocalDate;
 
@@ -38,6 +45,8 @@ public class MonitoredWorkoutFragment extends BaseListFragment<WorkoutListItem, 
     @BindView(R.id.toolbar)
     protected Toolbar toolbar;
 
+    private final WorkoutBroadcastReceiver workoutBroadcastReceiver = new WorkoutBroadcastReceiver();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,6 +60,18 @@ public class MonitoredWorkoutFragment extends BaseListFragment<WorkoutListItem, 
         ButterKnife.bind(this, view);
 
         setupToolbar(toolbar, getString(R.string.label_monitored_workouts), null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(workoutBroadcastReceiver, new IntentFilter(IksuWorkoutService.ACTION));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(workoutBroadcastReceiver);
     }
 
     @Override
@@ -115,5 +136,20 @@ public class MonitoredWorkoutFragment extends BaseListFragment<WorkoutListItem, 
             .equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername())
             .equalTo(Constants.MONITORING, true)
             .findAllSorted(Constants.START_DATE, Sort.ASCENDING);
+    }
+
+    private class WorkoutBroadcastReceiver extends BroadcastReceiver {
+        private WorkoutBroadcastReceiver() {}
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(IksuWorkoutService.ACTION)) {
+                if (intent.hasExtra(IksuWorkoutService.LOADING)) {
+                    setUiState(STATE_LOADING, 0, adapter.getItemCount() == 0);
+                } else {
+                    setUiState(adapter.getItemCount() == 0 ? STATE_EMPTY : STATE_NORMAL);
+                }
+            }
+        }
     }
 }
