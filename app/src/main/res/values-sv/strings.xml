@@ -127,4 +127,5 @@
     <string name="label_debug_test_checkin">Prova incheckingen</string>
     <string name="msg_error_card_locked">Ditt konto är låst :(</string>
     <string name="msg_no_monitored_workouts">Du bevakar inga pass</string>
+    <string name="msg_x_more">+%1$s till</string>
 </resources>

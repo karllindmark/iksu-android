@@ -33,7 +33,6 @@ public class IksuMonitorService extends JobService {
     @Override
     public boolean onStartJob(final JobParameters params) {
         final String username = params.getExtras().getString(Constants.USERNAME);
-        Log.d("YOLO", "Running the monitoring for " + username);
         task = new MonitoringSetupTask() {
             @Override
             protected void onPostExecute(Boolean result) {
@@ -80,7 +79,7 @@ public class IksuMonitorService extends JobService {
         }
 
         if (workoutCount > 3) {
-            inboxStyle.setSummaryText("+" + (workoutCount - 3) + " more");
+            inboxStyle.setSummaryText(getString(R.string.msg_x_more, (workoutCount - 3)));
         }
 
 
