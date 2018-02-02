@@ -151,4 +151,10 @@
     <string name="msg_error_card_locked">Your card is locked :(</string>
     <string name="msg_no_monitored_workouts">You aren\'t monitoring any workouts</string>
     <string name="msg_x_more">+%1$s more</string>
+
+    <plurals name="msg_x_filters_activated">
+        <item quantity="zero">%d filters activated</item>
+        <item quantity="one">%d filter activated</item>
+        <item quantity="other">%d filters activated</item>
+    </plurals>
 </resources>

@@ -11,6 +11,10 @@ abstract public class BaseSecondaryActivity extends BaseActivity {
     protected Toolbar toolbar;
 
     public void setupToolbar(final int title) {
+        setupToolbar(title, null);
+    }
+
+    public void setupToolbar(final int title, final String subtitle) {
         toolbar.setTitle(title);
 
         setSupportActionBar(toolbar);

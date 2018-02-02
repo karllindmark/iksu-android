@@ -8,12 +8,16 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.ninetwozero.iksu.R;
+import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.common.ui.BaseSecondaryActivity;
+import com.ninetwozero.iksu.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 
 public class ScheduleFilterActivity extends BaseSecondaryActivity {
@@ -23,11 +27,44 @@ public class ScheduleFilterActivity extends BaseSecondaryActivity {
     protected ViewPager viewPager;
 
     private ViewPagerAdapter pagerAdapter;
+    private Realm realm;
+    private RealmChangeListener<Realm> changeListener = new RealmChangeListener<Realm>() {
+        @Override
+        public void onChange(Realm realm) {
+            updateSubtitle(realm);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        realm = Realm.getDefaultInstance();
         setupViewPager();
+        updateSubtitle(realm);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        realm.addChangeListener(changeListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (realm != null) {
+            realm.removeChangeListener(changeListener);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (realm != null) {
+            realm.close();
+        }
     }
 
     @Override
@@ -43,6 +80,17 @@ public class ScheduleFilterActivity extends BaseSecondaryActivity {
         pagerAdapter.addFragment(CategoryFilterFragment.newInstance(), getString(R.string.label_categories));
         pagerAdapter.addFragment(InstructorFilterFragment.newInstance(), getString(R.string.label_instructors));
         viewPager.setAdapter(pagerAdapter);
+    }
+
+    private void updateSubtitle(final Realm realm){
+        final long count = realm.where(ScheduleFilterItem.class)
+            .equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername())
+            .equalTo("enabled", true)
+            .count();
+
+        toolbar.setSubtitle(
+            getResources().getQuantityString(R.plurals.msg_x_filters_activated, (int) count, count)
+        );
     }
 
     class ViewPagerAdapter extends FragmentStatePagerAdapter {

@@ -128,4 +128,11 @@
     <string name="msg_error_card_locked">Ditt konto är låst :(</string>
     <string name="msg_no_monitored_workouts">Du bevakar inga pass</string>
     <string name="msg_x_more">+%1$s till</string>
+
+
+    <plurals name="msg_x_filters_activated">
+        <item quantity="zero">%d filter aktiverade</item>
+        <item quantity="one">%d filter aktiverad</item>
+        <item quantity="other">%d filter aktiverade</item>
+    </plurals>
 </resources>
