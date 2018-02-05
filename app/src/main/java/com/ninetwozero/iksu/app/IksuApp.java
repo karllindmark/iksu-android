@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -26,14 +25,11 @@ import com.ninetwozero.iksu.network.interceptors.LoginSessionInterceptor;
 import com.ninetwozero.iksu.utils.Constants;
 import com.squareup.moshi.Moshi;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
@@ -129,14 +125,6 @@ public class IksuApp extends Application {
 
     private static OkHttpClient createOkHttpClient() {
         return new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        final Response response = chain.proceed(chain.request());
-                        Log.d("YOLO", "RESPONSE:\n" + response.peekBody(1024).string());
-                        return response;
-                    }
-                })
                 .addInterceptor(new ApiTokenInterceptor())
                 .addInterceptor(new LoginSessionInterceptor())
                 .build();
@@ -198,5 +186,9 @@ public class IksuApp extends Application {
     public static void activateDeveloperMode() {
         developerMode = true;
         sharedPreferences.edit().putBoolean(DEVELOPER_MODE, true).apply();
+    }
+
+    public static String getFiltersActiveKey() {
+        return Constants.FILTERS_ARE_ACTIVE + (IksuApp.hasSelectedAccount() ? "_" + IksuApp.getActiveUsername() : "");
     }
 }

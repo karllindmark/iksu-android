@@ -135,4 +135,6 @@
         <item quantity="one">%d filter aktiverad</item>
         <item quantity="other">%d filter aktiverade</item>
     </plurals>
+    <string name="label_filter_toggle">Slå på/av filter</string>
+    <string name="label_manage_filters">Hantera filter…</string>
 </resources>

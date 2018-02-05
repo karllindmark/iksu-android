@@ -76,6 +76,8 @@
     <string name="label_debug">Debug</string>
     <string name="label_debug_reset_token">Reset API token</string>
     <string name="label_class_started">The class has already started</string>
+    <string name="label_filter_toggle">Toggle filters on/off</string>
+    <string name="label_manage_filters">Manage filters…</string>
 
     <!-- Messages -->
     <string name="msg_loading_workouts">Loading classes</string>

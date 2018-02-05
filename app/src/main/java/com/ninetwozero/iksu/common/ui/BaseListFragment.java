@@ -165,7 +165,7 @@ public abstract class BaseListFragment<D, T extends RecyclerView.Adapter> extend
         return R.layout.fragment_base_list;
     }
 
-    protected void reconfigureListDataSource() {
+    protected void reconfigureListDataSource(boolean newState) {
         // NO-OP
     }
 

@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +19,6 @@ import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.common.ui.BaseListFragment;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailActivity;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment;
-import com.ninetwozero.iksu.features.schedule.shared.IksuMonitorService;
 import com.ninetwozero.iksu.features.schedule.shared.SimpleListItemDivider;
 import com.ninetwozero.iksu.features.schedule.shared.SimpleWorkoutListHeader;
 import com.ninetwozero.iksu.features.schedule.shared.SimpleWorkoutListItemAdapter;
@@ -29,7 +27,6 @@ import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.network.IksuWorkoutService;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.DateUtils;
-import com.ninetwozero.iksu.utils.WorkoutServiceHelper;
 
 import org.threeten.bp.LocalDate;
 

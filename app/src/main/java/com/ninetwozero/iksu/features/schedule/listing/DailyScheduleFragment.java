@@ -8,13 +8,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.ninetwozero.iksu.R;
@@ -23,7 +19,6 @@ import com.ninetwozero.iksu.common.ui.BaseListFragment;
 import com.ninetwozero.iksu.common.ui.DefaultMaterialHorizontalDivider;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailActivity;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment;
-import com.ninetwozero.iksu.features.schedule.filter.ScheduleFilterActivity;
 import com.ninetwozero.iksu.features.schedule.filter.ScheduleFilterItem;
 import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.network.IksuWorkoutService;
@@ -39,8 +34,6 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
     public static final String USE_FILTER_SETTINGS = "useFilterSettings";
     public static final String SHOW_LOADING = "showLoading";
     public static final String DATE = "date";
-
-    private static final int REQUEST_CODE_FILTER = 4001;
 
     private String date = null;
 
@@ -62,22 +55,19 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         if (sharedPreferences.contains(IksuApp.getLatestRefreshKey())) {
             setUiState(adapter.getItemCount() == 0 ? STATE_LOADING : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
 
-            // Pre-secroll the list to the first "reservable" class
-            for (int i = 0, max = adapter.getItemCount(); i < max; i++) {
-                if (adapter.getItem(i).isOpenForReservations()) {
-                    recyclerView.scrollToPosition(i);
+            // Pre-secroll the list to the class closest to starting
+            final long now = System.currentTimeMillis();
+            for (int i = 0, lastBefore = 0, max = adapter.getItemCount(); i < max; i++) {
+                if (adapter.getItem(i).getStartDate() < now) {
+                    lastBefore = i;
+                } else {
+                    recyclerView.scrollToPosition(lastBefore);
                     break;
                 }
             }
@@ -93,39 +83,9 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_daily_schedule, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_filter) {
-            startActivityForResult(new Intent(getContext(), ScheduleFilterActivity.class).putExtra("", ""), REQUEST_CODE_FILTER);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(workoutReceiver);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_FILTER) {
-            final Fragment fragment = getParentFragment();
-            if (fragment == null) {
-                reconfigureListDataSource();
-            } else {
-                if (fragment instanceof WeeklyScheduleFragment) {
-                    ((WeeklyScheduleFragment) fragment).reconfigureAllLists();
-                }
-            }
-        }
     }
 
     @Override
@@ -159,7 +119,8 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
     }
 
     @Override
-    public void reconfigureListDataSource() {
+    public void reconfigureListDataSource(boolean newState) {
+        shouldUseFilterSettings = newState;
         adapter.updateData(loadWorkoutsFromDatabase(shouldOnlyLoadWorkoutsRelevantToAccount, shouldUseFilterSettings));
     }
 
@@ -214,6 +175,8 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
             } else {
                 hasAppliedDataFilters = false;
             }
+        } else {
+            hasAppliedDataFilters = false;
         }
         return query.findAllSorted(Constants.START_DATE_STRING, Sort.ASCENDING);
     }

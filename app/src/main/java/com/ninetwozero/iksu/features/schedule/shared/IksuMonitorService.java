@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailActivity;

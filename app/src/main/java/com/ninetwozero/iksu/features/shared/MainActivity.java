@@ -35,7 +35,6 @@ import com.ninetwozero.iksu.features.schedule.reservation.ReservationTabFragment
 import com.ninetwozero.iksu.models.ApiSession;
 import com.ninetwozero.iksu.models.UserAccount;
 import com.ninetwozero.iksu.network.IksuLoginService;
-import com.ninetwozero.iksu.network.IksuWorkoutService;
 import com.ninetwozero.iksu.utils.ApiHelper;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.DensityUtils;
@@ -294,8 +293,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private boolean goToFeature(final int menuItemId, boolean closeDrawer) {
-        final Bundle data = new Bundle();
-
         Fragment fragment = null;
         Intent intent = null;
         int requestId = 0;
@@ -306,8 +303,10 @@ public class MainActivity extends BaseActivity {
                 break;
 
             case R.id.menu_all_classes:
-                fragment = new WeeklyScheduleFragment();
-                data.putBoolean(IksuWorkoutService.ONLY_RELEVANT_TO_LOGIN, IksuApp.hasSelectedAccount());
+                fragment = WeeklyScheduleFragment.newInstance(
+                    IksuApp.hasSelectedAccount(),
+                    sharedPreferences.getBoolean(IksuApp.getFiltersActiveKey(), true)
+                );
                 break;
 
             case R.id.menu_monitored_classes:
@@ -340,7 +339,6 @@ public class MainActivity extends BaseActivity {
         }
 
         if (fragment != null) {
-            fragment.setArguments(data);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, fragment).commit();
             drawerLayout.closeDrawer(GravityCompat.START, closeDrawer);
             return true;
@@ -374,5 +372,4 @@ public class MainActivity extends BaseActivity {
         }
         navHeaderDropdownIndicator.animate().rotation(show ? -180f : 0f);
     }
-
 }

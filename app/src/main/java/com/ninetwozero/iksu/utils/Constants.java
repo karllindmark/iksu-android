@@ -12,6 +12,7 @@ public class Constants {
     public static final String HAS_ACCEPTED_TOS = "has_accepted_tos";
     public static final String HAS_CONFIGURED_KEYSTORE = "has_configured_keystore";
     public static final String ERROR_KEY = "error_key";
+    public static final String FILTERS_ARE_ACTIVE = "filters_are_active";
 
     public static final String FILTER_TYPE = "workout_filter_type";
     public static final String FILTER_TIME_OF_DAY = "time_of_day";
