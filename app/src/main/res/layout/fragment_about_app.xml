@@ -56,14 +56,13 @@
         android:drawableStart="@mipmap/ic_launcher"
         android:textColor="@color/white"
 
-        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.25"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/app_name_2"
-        android:layout_marginEnd="@dimen/spacing_default"/>
+        app:layout_constraintEnd_toStartOf="@+id/app_name_2"
+        />
 
     <TextView
         android:id="@+id/app_name_2"
@@ -76,9 +75,10 @@
         android:fontFamily="sans-serif-light"
 
         app:layout_constraintStart_toEndOf="@id/app_name_1"
-        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/app_name_1"
         app:layout_constraintBottom_toBottomOf="@+id/app_name_1"
+        android:layout_marginStart="@dimen/spacing_default"
     />
 
 
