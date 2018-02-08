@@ -7,6 +7,7 @@ import com.ninetwozero.iksu.R;
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -26,6 +27,15 @@ public class DateUtils {
 
         final LocalDate realDate = LocalDate.now(ZoneId.of("Europe/Stockholm")).plusDays(offset);
         return realDate.format(offset < 0 ? DateTimeFormatter.ISO_DATE : WEEKDAY_FORMAT);
+    }
+
+    public static String getDayAndTime(Context context, long timestamp) {
+        final ZonedDateTime targetDate = ZonedDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.of("Europe/Stockholm"));
+        final long daysBetween = countDaysBetween(
+            ZonedDateTime.now(ZoneId.of("Europe/Stockholm")).with(LocalTime.of(0, 0, 0)),
+            targetDate.with(LocalTime.of(0,0,0)));
+
+        return getWeekday(context, daysBetween) + " @ " + targetDate.getHour() + ":" + targetDate.getMinute();
     }
 
     public static String getDate(int offset) {

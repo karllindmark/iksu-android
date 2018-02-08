@@ -6,7 +6,10 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 import com.ninetwozero.iksu.R;
+import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.common.ui.BaseActivity;
+import com.ninetwozero.iksu.models.Workout;
+import com.ninetwozero.iksu.utils.Constants;
 
 
 public class WorkoutDetailActivity extends BaseActivity {
@@ -20,6 +23,16 @@ public class WorkoutDetailActivity extends BaseActivity {
 
         workoutId = getIntent().getStringExtra(WorkoutDetailFragment.WORKOUT_ID);
         workoutTitle = getIntent().getStringExtra(WorkoutDetailFragment.WORKOUT_TITLE);
+
+        final long matchingWorkoutCount = realm.where(Workout.class)
+            .equalTo(Constants.ID, workoutId)
+            .equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername())
+            .count();
+
+        if (matchingWorkoutCount == 0) {
+            finish();
+            return;
+        }
 
         showDetailFragment();
     }

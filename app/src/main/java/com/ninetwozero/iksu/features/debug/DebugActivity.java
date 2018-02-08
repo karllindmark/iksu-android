@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.ninetwozero.iksu.BuildConfig;
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.app.IksuApp;
+import com.ninetwozero.iksu.common.NotificationHelper;
 import com.ninetwozero.iksu.common.ui.BaseSecondaryActivity;
 import com.ninetwozero.iksu.features.schedule.shared.IksuCheckinService;
 import com.ninetwozero.iksu.models.Workout;
@@ -40,6 +41,7 @@ import butterknife.ButterKnife;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
+import io.realm.RealmResults;
 import io.realm.Sort;
 
 
@@ -80,7 +82,11 @@ public class DebugActivity extends BaseSecondaryActivity {
             recyclerView.swapAdapter(createAdapter(), true);
         } else if (item.getItemId() == R.id.menu_test_checkin) {
             startCheckinTestFlow();
-
+        } else if (item.getItemId() == R.id.menu_test_notifications) {
+            RealmResults<Workout> results = realm.where(Workout.class).findAllSorted(Constants.START_DATE, Sort.ASCENDING);
+            int fromIndex = (int) Math.round(Math.random() * results.size());
+            int toIndex = (int) Math.min(fromIndex + Math.round(Math.random() * results.size()), results.size());
+            new NotificationHelper(getApplication()).notify(realm.copyFromRealm(results.subList(fromIndex, toIndex)));
         }
         return super.onOptionsItemSelected(item);
     }

@@ -1,18 +1,10 @@
 package com.ninetwozero.iksu.features.schedule.shared;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 
-import com.ninetwozero.iksu.R;
-import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailActivity;
-import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment;
+import com.ninetwozero.iksu.common.NotificationHelper;
 import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.WorkoutServiceHelper;
@@ -60,37 +52,7 @@ public class IksuMonitorService extends JobService {
     }
 
     private void notifyUserAboutAvailableSlots(final List<Workout> workouts) {
-        final int workoutCount = workouts.size();
-        if (workoutCount == 0) {
-            return;
-        }
-
-        final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(WorkoutDetailActivity.class);
-        stackBuilder.addNextIntent(
-            new Intent(this, WorkoutDetailActivity.class)
-                .putExtra(WorkoutDetailFragment.WORKOUT_ID, workouts.get(0).getPkId())
-        );
-
-        final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        for (int i = 0, max = workoutCount < 3 ? workoutCount : 3; i < max; i++) {
-            inboxStyle.addLine(workouts.get(i).getStartDateString() + ": " + workouts.get(i).getTitle());
-        }
-
-        if (workoutCount > 3) {
-            inboxStyle.setSummaryText(getString(R.string.msg_x_more, (workoutCount - 3)));
-        }
-
-
-        final PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        final Notification notification = new NotificationCompat.Builder(this, Constants.NOTIFICATION_MONITOR)
-            .setContentTitle(getString(R.string.label_notification_slots_available))
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setContentIntent(pendingIntent)
-            .setStyle(inboxStyle)
-            .build();
-
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(10001, notification);
+        new NotificationHelper(getApplication()).notify(workouts);
     }
 
     private RealmResults<Workout> loadMonitoredWorkouts(final Realm realm, final String username) {

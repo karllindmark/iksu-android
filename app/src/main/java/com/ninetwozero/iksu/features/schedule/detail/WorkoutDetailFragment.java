@@ -117,6 +117,7 @@ public class WorkoutDetailFragment extends BaseFragment {
         workoutId = getArguments().getString(WORKOUT_ID, "");
         workoutTitle = getArguments().getString(WORKOUT_TITLE, "");
         workout = loadWorkoutFromDatabase();
+        workoutTitle = workout.getTitle();
     }
 
     @Nullable

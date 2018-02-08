@@ -9,6 +9,13 @@
         android:icon="@drawable/ic_hot_tub_black_24dp"
         app:showAsAction="withText"
         />
+
+    <item
+        android:id="@+id/menu_test_notifications"
+        android:title="@string/label_debug_test_notifications"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        app:showAsAction="withText"
+        />
     <item
         android:id="@+id/menu_reset_api_token"
         android:title="@string/label_debug_reset_token"
