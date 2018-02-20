@@ -1,9 +1,11 @@
 package com.ninetwozero.iksu.features.debug;
 
 import android.app.Dialog;
+import android.app.job.JobScheduler;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,7 @@ import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.common.NotificationHelper;
 import com.ninetwozero.iksu.common.ui.BaseSecondaryActivity;
 import com.ninetwozero.iksu.features.schedule.shared.IksuCheckinService;
+import com.ninetwozero.iksu.features.schedule.shared.WorkoutMonitorHelper;
 import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.utils.Constants;
 import com.ninetwozero.iksu.utils.DateUtils;
@@ -43,6 +46,7 @@ import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import timber.log.Timber;
 
 
 public class DebugActivity extends BaseSecondaryActivity {
@@ -77,16 +81,20 @@ public class DebugActivity extends BaseSecondaryActivity {
             return true;
         }
 
-        if (item.getItemId() == R.id.menu_reset_api_token) {
-            sharedPreferences.edit().remove(Constants.API_TOKEN).remove(Constants.API_TOKEN_EXPIRATION).apply();
-            recyclerView.swapAdapter(createAdapter(), true);
-        } else if (item.getItemId() == R.id.menu_test_checkin) {
-            startCheckinTestFlow();
-        } else if (item.getItemId() == R.id.menu_test_notifications) {
-            RealmResults<Workout> results = realm.where(Workout.class).findAllSorted(Constants.START_DATE, Sort.ASCENDING);
-            int fromIndex = (int) Math.round(Math.random() * results.size());
-            int toIndex = (int) Math.min(fromIndex + Math.round(Math.random() * results.size()), results.size());
-            new NotificationHelper(getApplication()).notify(realm.copyFromRealm(results.subList(fromIndex, toIndex)));
+        switch (item.getItemId()) {
+            case R.id.menu_reset_api_token:
+                sharedPreferences.edit().remove(Constants.API_TOKEN).remove(Constants.API_TOKEN_EXPIRATION).apply();
+                recyclerView.swapAdapter(createAdapter(), true);
+                return true;
+            case R.id.menu_test_checkin:
+                startCheckinTestFlow();
+                return true;
+            case R.id.menu_test_notifications:
+                startNotificationTestingFlow();
+                return true;
+            case R.id.menu_test_monitoring:
+                startMonitorTestingFlow();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -100,6 +108,60 @@ public class DebugActivity extends BaseSecondaryActivity {
             .build();
         debugWorkoutAdapter.setDialog(dialog);
         dialog.show();
+    }
+
+    private void startNotificationTestingFlow() {
+        RealmResults<Workout> results = realm.where(Workout.class).findAllSorted(Constants.START_DATE, Sort.ASCENDING);
+        int fromIndex = (int) Math.round(Math.random() * results.size());
+        int toIndex = (int) Math.min(fromIndex + Math.round(Math.random() * results.size()), results.size());
+        new NotificationHelper(getApplication()).notify(realm.copyFromRealm(results.subList(fromIndex, toIndex)));
+    }
+
+    // TODO: Let's actually extract this to one of those fancy test cases "soon"
+    private void startMonitorTestingFlow() {
+        final JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        final WorkoutMonitorHelper helper = new WorkoutMonitorHelper(getApplication());
+
+        final List<Workout> workouts = realm.where(Workout.class)
+            .greaterThan(Constants.START_DATE, System.currentTimeMillis())
+            .findAllSorted(Constants.START_DATE, Sort.ASCENDING)
+            .subList(0, 3);
+
+        boolean singleStatus = startMonitoringOneWorkout(jobScheduler, helper, workouts.get(0));
+        boolean multipleStatus = startMonitoringMultipleWorkouts(jobScheduler, helper, workouts);
+
+        Snackbar.make(findViewById(android.R.id.content), "DONE (" + ((singleStatus && multipleStatus) ? "OK" : "NOK") + ")", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean startMonitoringOneWorkout(JobScheduler jobScheduler, WorkoutMonitorHelper helper, Workout workout) {
+        int initialJobCount = jobScheduler.getAllPendingJobs().size();
+        helper.schedule(workout);
+        int jobCountAfterScheduling = jobScheduler.getAllPendingJobs().size();
+        helper.unschedule(workout);
+        int jobCountAfterUnscheduling = jobScheduler.getAllPendingJobs().size();
+
+        Timber.i("Initial job count: %d", initialJobCount);
+        Timber.i("Job count after scheduling workout: %d (expected %d)", jobCountAfterScheduling, initialJobCount + 2);
+        Timber.i("Job count removing said workout: %d", jobCountAfterUnscheduling);
+
+        return initialJobCount == jobCountAfterUnscheduling;
+    }
+
+    private boolean startMonitoringMultipleWorkouts(JobScheduler jobScheduler, WorkoutMonitorHelper helper, List<Workout> workouts) {
+        int initialJobCount = jobScheduler.getAllPendingJobs().size();
+        for (Workout workout : workouts) {
+            helper.schedule(workout);
+        }
+
+        int jobCountAfterScheduling = jobScheduler.getAllPendingJobs().size();
+        helper.unschedule(workouts);
+        int jobCountAfterUnscheduling = jobScheduler.getAllPendingJobs().size();
+
+        Timber.i("Initial job count: %d", initialJobCount);
+        Timber.i("Job count after scheduling workout: %d (expected %d)", jobCountAfterScheduling, initialJobCount + 4);
+        Timber.i("Job count removing said workout: %d", jobCountAfterUnscheduling);
+
+        return initialJobCount == jobCountAfterUnscheduling;
     }
 
     private OrderedRealmCollection<Workout> loadFromDatabase() {

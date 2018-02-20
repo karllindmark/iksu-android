@@ -309,35 +309,37 @@ public class Workout extends RealmObject implements WorkoutListItem {
     @Override
     public String toString() {
         return "Workout{" +
-                "pkId='" + pkId + '\'' +
-                "id='" + id + '\'' +
-                ", key='" + key + '\'' +
-                ", title='" + title + '\'' +
-                ", type='" + type + '\'' +
-                ", notice='" + notice + '\'' +
-                ", instructorKey='" + instructorKey + '\'' +
-                ", instructor='" + instructor + '\'' +
-                ", coInstructorKey='" + coInstructorKey + '\'' +
-                ", coInstructor='" + coInstructor + '\'' +
-                ", startDate=" + startDate +
-                ", startDateString='" + startDateString + '\'' +
-                ", endDate=" + endDate +
-                ", endDateString='" + endDateString + '\'' +
-                ", timeInterval='" + timeInterval + '\'' +
-                ", bookedSlotCount=" + bookedSlotCount +
-                ", totalSlotCount=" + totalSlotCount +
-                ", facilityId='" + facilityId + '\'' +
-                ", facility='" + facility + '\'' +
-                ", roomId='" + roomId + '\'' +
-                ", room='" + room + '\'' +
-                ", dropin=" + dropin +
-                ", openForReservations=" + openForReservations +
-                ", cancellationStatus=" + cancellationStatus +
-                ", connectedAccount='" + connectedAccount + '\'' +
-                ", reservationDeadline=" + reservationDeadline +
-                ", reservationId=" + reservationId +
-                ", ratedByUser=" + ratedByUser +
-                '}';
+            "pkId='" + pkId + '\'' +
+            ", id='" + id + '\'' +
+            ", key='" + key + '\'' +
+            ", title='" + title + '\'' +
+            ", type='" + type + '\'' +
+            ", notice='" + notice + '\'' +
+            ", instructorKey='" + instructorKey + '\'' +
+            ", instructor='" + instructor + '\'' +
+            ", coInstructorKey='" + coInstructorKey + '\'' +
+            ", coInstructor='" + coInstructor + '\'' +
+            ", startDate=" + startDate +
+            ", startDateString='" + startDateString + '\'' +
+            ", endDate=" + endDate +
+            ", endDateString='" + endDateString + '\'' +
+            ", timeInterval='" + timeInterval + '\'' +
+            ", bookedSlotCount=" + bookedSlotCount +
+            ", totalSlotCount=" + totalSlotCount +
+            ", facilityId='" + facilityId + '\'' +
+            ", facility='" + facility + '\'' +
+            ", roomId='" + roomId + '\'' +
+            ", room='" + room + '\'' +
+            ", dropin=" + dropin +
+            ", openForReservations=" + openForReservations +
+            ", cancellationStatus=" + cancellationStatus +
+            ", connectedAccount='" + connectedAccount + '\'' +
+            ", reservationDeadline=" + reservationDeadline +
+            ", reservationId=" + reservationId +
+            ", ratedByUser=" + ratedByUser +
+            ", monitoring=" + monitoring +
+            ", checkedIn=" + checkedIn +
+            '}';
     }
 
     @Override

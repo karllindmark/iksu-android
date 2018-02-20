@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.ninetwozero.iksu.BuildConfig;
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.database.migrations.IksuDatabaseMigration;
 import com.ninetwozero.iksu.models.UserAccount;
@@ -32,6 +33,7 @@ import io.realm.RealmConfiguration;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
+import timber.log.Timber;
 
 import static com.ninetwozero.iksu.utils.Constants.DEVELOPER_MODE;
 import static com.ninetwozero.iksu.utils.Constants.KEY_UUID;
@@ -49,6 +51,7 @@ public class IksuApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         AndroidThreeTen.init(this);
         Realm.init(this);
         Realm.setDefaultConfiguration(createRealmConfiguration());
@@ -56,6 +59,10 @@ public class IksuApp extends Application {
         applicationContext = this;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(IksuApp.getContext());
         developerMode = sharedPreferences.getBoolean(Constants.DEVELOPER_MODE, false);
+
+        if (BuildConfig.DEBUG || IksuApp.hasEnabledDeveloperMode()) {
+            Timber.plant(new Timber.DebugTree());
+        }
 
         final String currentUsername = sharedPreferences.getString(Constants.CURRENT_USER, "");
         if (!TextUtils.isEmpty(currentUsername)) {
@@ -83,17 +90,18 @@ public class IksuApp extends Application {
 
         final NotificationChannel notificationChannel = new NotificationChannel(
             Constants.NOTIFICATION_MONITOR,
-            "Monitored workouts",
+            getString(R.string.notification_channel_name),
             NotificationManager.IMPORTANCE_HIGH
         );
 
-        notificationChannel.setDescription("Used to notify you about available spots on monitored workouts");
+        notificationChannel.setDescription(getString(R.string.notification_channel_labels));
         notificationChannel.setShowBadge(true);
         notificationChannel.enableLights(true);
         notificationChannel.enableVibration(true);
         notificationChannel.setLightColor(Color.CYAN);
-        notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(notificationChannel);
+        notificationChannel.setVibrationPattern(new long[] {0, 250, 250, 250});
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
+            .createNotificationChannel(notificationChannel);
 
     }
 

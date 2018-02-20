@@ -26,6 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -70,6 +71,7 @@ public class WorkoutDetailFragment extends BaseFragment {
 
     private static final int REQUEST_NESTED = 1001;
     private static final int ACCESS_FINE_LOCATION_REQUEST = 1002;
+    private static final int ITEM_ID_DEV_MONITORING = 123;
 
     @BindView(R.id.toolbar)
     protected Toolbar toolbar;
@@ -151,8 +153,21 @@ public class WorkoutDetailFragment extends BaseFragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.common_share, menu);
 
+        if (IksuApp.hasEnabledDeveloperMode()) {
+            menu.add(2, ITEM_ID_DEV_MONITORING, 0, getString(R.string.label_debug_test_monitoring));
+        }
+
         final Intent intent = createShareIntent(workout);
         ((ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.action_share))).setShareIntent(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == ITEM_ID_DEV_MONITORING) {
+            scheduleHandler.toggleMonitoring(workout);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -305,6 +320,11 @@ public class WorkoutDetailFragment extends BaseFragment {
 
     public class ScheduleDetailHandler {
         public void onPrimaryActionClick(final View view, final Workout workout) {
+            if (System.currentTimeMillis() > workout.getStartDate()) {
+                // NO-OP
+                return;
+            }
+
             if (workout.getReservationId() != 0) {
                 if (workout.hasCheckedIn()) {
                     Snackbar.make(getView(), R.string.msg_already_checkedin, Snackbar.LENGTH_LONG).show();
@@ -349,23 +369,24 @@ public class WorkoutDetailFragment extends BaseFragment {
         }
 
         private void toggleMonitoring(final Workout workout) {
+            final boolean shouldMonitor = !workout.isMonitoring();
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    workout.setMonitoring(!workout.isMonitoring());
-                    if (workout.isMonitoring()) {
-                        scheduleMonitoring();
-                    } else {
-                        unscheduleMonitoring();
-                    }
-                    Snackbar.make(
-                        getView(),
-                        (workout.isMonitoring() ? "Start monitoring " : "Stop monitoring " ) + workout.getTitle(),
-                        Toast.LENGTH_SHORT
-                    ).show();
+                    workout.setMonitoring(shouldMonitor);
                 }
             });
 
+            if (shouldMonitor) {
+                scheduleMonitoring();
+            } else {
+                unscheduleMonitoring();
+            }
+            Snackbar.make(
+                getView(),
+                (shouldMonitor ? "Start monitoring " : "Stop monitoring " ) + workout.getTitle(),
+                Toast.LENGTH_SHORT
+            ).show();
         }
 
         private void scheduleMonitoring() {

@@ -17,6 +17,12 @@
         app:showAsAction="withText"
         />
     <item
+        android:id="@+id/menu_test_monitoring"
+        android:title="@string/label_debug_test_monitoring"
+        android:icon="@drawable/ic_event_available_black_24dp"
+        app:showAsAction="withText"
+        />
+    <item
         android:id="@+id/menu_reset_api_token"
         android:title="@string/label_debug_reset_token"
         android:icon="@drawable/ic_remove_circle_black_24dp"

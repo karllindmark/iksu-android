@@ -17,9 +17,13 @@ import com.ninetwozero.iksu.utils.DateUtils;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class NotificationHelper {
+    private static final int NOTIFICATION_ID = 1001;
+
     private final Application application;
     private final NotificationManager notificationManager;
 
@@ -57,7 +61,6 @@ public class NotificationHelper {
             inboxStyle.setSummaryText(application.getString(R.string.msg_x_more, (workoutCount - 3)));
         }
 
-
         final PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         final Notification notification = new NotificationCompat.Builder(application, Constants.NOTIFICATION_MONITOR)
             .setContentTitle(application.getString(R.string.label_notification_slots_available))
@@ -65,8 +68,15 @@ public class NotificationHelper {
             .setContentIntent(pendingIntent)
             .setStyle(inboxStyle)
             .setAutoCancel(true)
+            .setNumber(workoutCount)
+            .setOnlyAlertOnce(true)
             .build();
 
-        notificationManager.notify(10001, notification);
+        notificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    public void removeNotification() {
+        Timber.i("No slots free in monitored workouts, removing the notification...");
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 }

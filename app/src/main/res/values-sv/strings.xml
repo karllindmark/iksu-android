@@ -139,4 +139,8 @@
     <string name="label_manage_filters">Hantera filter…</string>
     <string name="label_debug_test_notifications">Testnotifiering</string>
     <string name="label_notification_line_text">%1$s: %2$s (%3$s)</string>
+    <string name="label_debug_test_monitoring">Testa bevakning</string>
+    <string name="label_class_ended">Passet har redan varit</string>
+    <string name="notification_channel_labels">Används för att notifiera dig om lediga platser på bevakade pass</string>
+    <string name="notification_channel_name">Bevakade pass</string>
 </resources>

@@ -78,6 +78,17 @@
     <string name="label_class_started">The class has already started</string>
     <string name="label_filter_toggle">Toggle filters on/off</string>
     <string name="label_manage_filters">Manage filters…</string>
+    <string name="label_debug_test_notifications">Test notifications</string>
+    <string name="label_notification_line_text">%1$s: %2$s (%3$s)</string>
+    <string name="label_monitor_q">Monitor?</string>
+    <string name="label_monitoring">Monitoring</string>
+    <string name="label_checked_in">Checked in</string>
+    <string name="label_check_in_q">Check in?</string>
+    <string name="label_notification_slots_available">Slots available at IKSU</string>
+    <string name="label_monitored_workouts">Monitored workouts</string>
+    <string name="label_debug_test_checkin">Test check-in</string>
+    <string name="label_debug_test_monitoring">Test monitoring</string>
+    <string name="label_class_ended">The class has already finished</string>
 
     <!-- Messages -->
     <string name="msg_loading_workouts">Loading classes</string>
@@ -119,6 +130,22 @@
     <string name="msg_workout_not_found">Class could not be found</string>
     <string name="msg_downloading_workout">Downloading class...</string>
     <string name="msg_login_error_blocked">Your IKSU account seems to be locked.</string>
+    <string name="msg_account_disabled">Account \'%1$s\' has been disabled</string>
+    <string name="msg_activating_devmode">Activating developer mode</string>
+    <string name="msg_location_permission_rationale">This app needs to access your location to determine if you\'re currently at an IKSU facility</string>
+    <string name="msg_already_checkedin">You\'ve already checked in</string>
+    <string name="msg_checkin_failed">Unable to check-in - are you really at %1$s?</string>
+    <string name="msg_error_no_gps">Unable to figure out where you are</string>
+    <string name="msg_checkin_ok">Checked-in!</string>
+    <string name="msg_error_general">An unknown error occurred</string>
+    <string name="msg_error_not_logged_in">You\'re not logged in</string>
+    <string name="msg_error_checkin_failed">Too early to check-in</string>
+    <string name="msg_error_already_checkedin">Already checked-in</string>
+    <string name="msg_error_iksu_backend">IKSU is down :(</string>
+    <string name="msg_error_card_locked">Your card is locked :(</string>
+    <string name="msg_no_monitored_workouts">You aren\'t monitoring any workouts</string>
+    <string name="msg_x_more">+%1$d more</string>
+
 
     <!-- Content descriptions -->
     <string name="cdesc_avatar">User avatar</string>
@@ -131,30 +158,9 @@
     <string name="facility_unknown">Unknown facility</string>
     <string name="random_drumroll">*drumroll*</string>
     <string name="x_by_y">%1$s by %2$s</string>
-    <string name="msg_account_disabled">Account \'%1$s\' has been disabled</string>
-    <string name="msg_activating_devmode">Activating developer mode</string>
-    <string name="label_monitor_q">Monitor?</string>
-    <string name="label_monitoring">Monitoring</string>
-    <string name="label_checked_in">Checked in</string>
-    <string name="label_check_in_q">Check in?</string>
-    <string name="msg_location_permission_rationale">This app needs to access your location to determine if you\'re currently at an IKSU facility</string>
-    <string name="msg_already_checkedin">You\'ve already checked in</string>
-    <string name="msg_checkin_failed">Unable to check-in - are you really at %1$s?</string>
-    <string name="msg_error_no_gps">Unable to figure out where you are</string>
-    <string name="msg_checkin_ok">Checked-in!</string>
-    <string name="msg_error_general">An unknown error occurred</string>
-    <string name="msg_error_not_logged_in">You\'re not logged in</string>
-    <string name="msg_error_checkin_failed">Too early to check-in</string>
-    <string name="msg_error_already_checkedin">Already checked-in</string>
-    <string name="msg_error_iksu_backend">IKSU is down :(</string>
-    <string name="label_notification_slots_available">Slots available at IKSU</string>
-    <string name="label_monitored_workouts">Monitored workouts</string>
-    <string name="label_debug_test_checkin">Test check-in</string>
-    <string name="msg_error_card_locked">Your card is locked :(</string>
-    <string name="msg_no_monitored_workouts">You aren\'t monitoring any workouts</string>
-    <string name="msg_x_more">+%1$d more</string>
-    <string name="label_debug_test_notifications">Test notifications</string>
-    <string name="label_notification_line_text">%1$s: %2$s (%3$s)</string>
+
+    <string name="notification_channel_name">Monitored workouts</string>
+    <string name="notification_channel_labels">Used to notify you about available spots on monitored workouts</string>
 
     <plurals name="msg_x_filters_activated">
         <item quantity="zero">%d filters activated</item>

@@ -33,6 +33,8 @@ public class WorkoutUiHelper {
                 return context.getString(R.string.label_info);
             }
         } else if (System.currentTimeMillis() >= workout.getEndDate()) {
+            return context.getString(R.string.label_class_ended);
+        } else if (System.currentTimeMillis() >= workout.getStartDate()) {
             return context.getString(R.string.label_class_started);
         }
         return context.getString(R.string.empty);
