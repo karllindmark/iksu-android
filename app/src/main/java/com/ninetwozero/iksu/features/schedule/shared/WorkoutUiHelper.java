@@ -16,7 +16,11 @@ public class WorkoutUiHelper {
             return workout.getBookedSlotCount() + "/" + workout.getTotalSlotCount();
         }
 
-        if (workout.getReservationId() != 0) {
+        if (System.currentTimeMillis() >= workout.getEndDate()) {
+            return context.getString(R.string.label_class_ended);
+        } else if (System.currentTimeMillis() >= workout.getStartDate()) {
+            return context.getString(R.string.label_class_started);
+        } else if (workout.getReservationId() != 0) {
             if (workout.hasCheckedIn()) {
                 return context.getString(R.string.label_checked_in);
             } else {
@@ -32,17 +36,15 @@ public class WorkoutUiHelper {
             } else if (workout.getReservationDeadline() > System.currentTimeMillis()) {
                 return context.getString(R.string.label_info);
             }
-        } else if (System.currentTimeMillis() >= workout.getEndDate()) {
-            return context.getString(R.string.label_class_ended);
-        } else if (System.currentTimeMillis() >= workout.getStartDate()) {
-            return context.getString(R.string.label_class_started);
         }
         return context.getString(R.string.empty);
     }
 
     public int getColorForStatusBadge(Workout workout) {
         if (workout != null) {
-            if (workout.getReservationId() != 0) {
+            if (System.currentTimeMillis() >= workout.getStartDate()) {
+                return R.color.grey;
+            } else if (workout.getReservationId() != 0) {
                 return R.color.colorAccentLight;
             } else if (workout.isDropin()) {
                 return R.color.class_state_lt60;
@@ -86,8 +88,11 @@ public class WorkoutUiHelper {
 
     public boolean shouldShowTheSecondayAction(Workout workout) {
         return (
-            (workout.isFullyBooked() && workout.isOpenForReservations() && !workout.hasReservation()) ||
+            System.currentTimeMillis() < workout.getStartDate() &&
+            (
+                (workout.isFullyBooked() && workout.isOpenForReservations() && !workout.hasReservation()) ||
                 (workout.hasReservation() && !workout.hasCheckedIn())
+            )
         );
     }
 
