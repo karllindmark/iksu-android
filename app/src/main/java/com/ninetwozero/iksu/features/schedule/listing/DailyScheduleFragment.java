@@ -59,7 +59,10 @@ public class DailyScheduleFragment extends BaseListFragment<Workout, WorkoutList
         super.onViewCreated(view, savedInstanceState);
 
         if (sharedPreferences.contains(IksuApp.getLatestRefreshKey())) {
-            setUiState(adapter.getItemCount() == 0 ? STATE_LOADING : STATE_NORMAL, hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts);
+            setUiState(
+                adapter.getItemCount() == 0 ? STATE_LOADING : STATE_NORMAL,
+                adapter.getItemCount() == 0 ? R.string.msg_loading_workouts : (hasAppliedDataFilters ? R.string.msg_no_workouts_with_filter : R.string.msg_no_workouts)
+            );
 
             // Pre-secroll the list to the class closest to starting
             final long now = System.currentTimeMillis();

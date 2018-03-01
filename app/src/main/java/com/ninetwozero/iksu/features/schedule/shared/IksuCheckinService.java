@@ -54,7 +54,7 @@ public class IksuCheckinService extends BaseIksuService {
 
         String errorKey = "";
         try (Realm realm = Realm.getDefaultInstance()) {
-            final Workout workout = realm.where(Workout.class).equalTo("pkId", id).findFirst();
+            final Workout workout = realm.where(Workout.class).equalTo(Constants.PK_ID, id).findFirst();
 
             final Response<String> checkinResponse = IksuApp.getApi()
                 .checkin(workout.getReservationId(), createRequestBodyForCheckin(workout))

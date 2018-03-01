@@ -195,7 +195,7 @@ public class WorkoutServiceHelper {
                     workout.setPkId(workout.getId() + "_" + connectedAccount);
                     workout.setConnectedAccount(connectedAccount);
 
-                    final Workout oldWorkout = realm.where(Workout.class).equalTo("pkId", workout.getPkId()).findFirst();
+                    final Workout oldWorkout = realm.where(Workout.class).equalTo(Constants.PK_ID, workout.getPkId()).findFirst();
                     if (oldWorkout != null) {
                         workout.setCheckedIn(oldWorkout.hasCheckedIn());
                         workout.setMonitoring(oldWorkout.isMonitoring());

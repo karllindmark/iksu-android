@@ -10,12 +10,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.ninetwozero.iksu.R;
 import com.ninetwozero.iksu.app.IksuApp;
+import com.ninetwozero.iksu.common.SimpleRecyclerViewSwipeCallback;
 import com.ninetwozero.iksu.common.ui.BaseListFragment;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailActivity;
 import com.ninetwozero.iksu.features.schedule.detail.WorkoutDetailFragment;
@@ -23,6 +25,7 @@ import com.ninetwozero.iksu.features.schedule.shared.SimpleListItemDivider;
 import com.ninetwozero.iksu.features.schedule.shared.SimpleWorkoutListHeader;
 import com.ninetwozero.iksu.features.schedule.shared.SimpleWorkoutListItemAdapter;
 import com.ninetwozero.iksu.features.schedule.shared.WorkoutListItem;
+import com.ninetwozero.iksu.features.schedule.shared.WorkoutMonitorHelper;
 import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.network.IksuWorkoutService;
 import com.ninetwozero.iksu.utils.Constants;
@@ -35,6 +38,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -57,6 +61,47 @@ public class MonitoredWorkoutFragment extends BaseListFragment<WorkoutListItem, 
         ButterKnife.bind(this, view);
 
         setupToolbar(toolbar, getString(R.string.label_monitored_workouts), null);
+
+        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SimpleRecyclerViewSwipeCallback() {
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                super.onSwiped(viewHolder, direction);
+
+                final int position = viewHolder.getAdapterPosition();
+                final int maxPosition = adapter.getItemCount() - 1;
+                final Workout swipedWorkout = (Workout) adapter.getItem(position);
+
+                boolean hasHeaderBefore = false;
+                boolean hasHeaderAfter = false;
+
+                if (position > 0) {
+                    hasHeaderBefore = adapter.getItem(position-1).getItemType() == WorkoutListItem.HEADER;
+                }
+
+                if (position < maxPosition) {
+                    hasHeaderAfter = adapter.getItem(position + 1).getItemType() == WorkoutListItem.HEADER;
+                }
+
+                if (hasHeaderBefore && (hasHeaderAfter || position == maxPosition)) {
+                    adapter.removeItemRange(position - 1, 2);
+                } else {
+                    adapter.removeItemAt(position);
+                }
+
+                final String pkId = swipedWorkout.getPkId();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        final Workout managedObject = realm.where(Workout.class)
+                            .equalTo(Constants.PK_ID, pkId)
+                            .findFirst();
+                        managedObject.setMonitoring(false);
+                        new WorkoutMonitorHelper(getActivity()).unschedule(realm.copyFromRealm(managedObject));
+                    }
+                });
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import timber.log.Timber;
 
 public class WorkoutMonitorHelper {
@@ -79,15 +80,18 @@ public class WorkoutMonitorHelper {
         }
 
         try (Realm realm = Realm.getDefaultInstance()){
-            final long monitorsLeft = realm.where(Workout.class)
+            RealmQuery<Workout> query = realm.where(Workout.class)
                 .beginGroup()
                 .equalTo(Constants.CONNECTED_ACCOUNT, IksuApp.getActiveUsername())
                 .equalTo(Constants.MONITORING, true)
-                .endGroup()
-                .not()
-                .in(Constants.ID, workoutIds)
-                .count();
+                .endGroup();
 
+            if (workoutIds.length > 0) {
+                query.not()
+                .in(Constants.ID, workoutIds);
+            }
+
+            final long monitorsLeft = query.count();
             if (monitorsLeft == 0) {
                 Timber.i("Canceling periodic job");
                 jobScheduler.cancel(IksuMonitorService.PERIODIC_JOB_ID);

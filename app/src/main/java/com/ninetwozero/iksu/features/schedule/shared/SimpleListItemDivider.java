@@ -63,6 +63,11 @@ public class SimpleListItemDivider extends ItemDecoration {
 
     private boolean shouldDrawDivider(final RecyclerView parent, View child) {
         final int current = parent.getChildAdapterPosition(child);
+        if (current == RecyclerView.NO_POSITION) {
+            // Don't draw dividers for items that don't exist
+            return false;
+        }
+
         return (
             parent.getAdapter().getItemViewType(current) == WorkoutListItem.ITEM &&
             parent.getAdapter().getItemCount() > (current+1) &&

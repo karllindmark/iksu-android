@@ -49,9 +49,27 @@ public class SimpleWorkoutListItemAdapter extends RecyclerView.Adapter<SimpleWor
         return items.size();
     }
 
+    public WorkoutListItem getItem(int position) {
+        return items.get(position);
+    }
+
     public void setItems(List<WorkoutListItem> items) {
         this.items = items;
-        notifyItemRangeChanged(0, items.size());
+        notifyDataSetChanged();
+        listCallbacks.onItemCountChanged(items.size());
+    }
+
+    public void removeItemAt(int position) {
+        items.remove(position);
+        notifyItemRemoved(position);
+        listCallbacks.onItemCountChanged(items.size());
+    }
+
+    public void removeItemRange(int startingPosition, int count) {
+        for (int i = (startingPosition + count - 1); i >= startingPosition; i--) {
+            items.remove(i);
+        }
+        notifyItemRangeRemoved(startingPosition, count);
         listCallbacks.onItemCountChanged(items.size());
     }
 

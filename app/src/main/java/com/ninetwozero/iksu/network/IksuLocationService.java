@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.ninetwozero.iksu.models.Workout;
+import com.ninetwozero.iksu.utils.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,7 +112,7 @@ public class IksuLocationService extends Service {
 
     private void onLocationUpdated(Location lastLocation, boolean stopAfterCompletion) {
         if (lastLocation != null) {
-            final Workout workout = Realm.getDefaultInstance().where(Workout.class).equalTo("pkId", workoutPkId).findFirst();
+            final Workout workout = Realm.getDefaultInstance().where(Workout.class).equalTo(Constants.PK_ID, workoutPkId).findFirst();
             if (workout != null) {
                 if (AVAILABLE_FACILITIES.get(workout.getFacilityId()).contains(lastLocation)) {
                     broadcastStatus(STATUS_VALID);
