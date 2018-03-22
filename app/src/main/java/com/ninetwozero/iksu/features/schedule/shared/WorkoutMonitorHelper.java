@@ -37,20 +37,8 @@ public class WorkoutMonitorHelper {
         bundle.putString(Constants.USERNAME, IksuApp.getActiveUsername());
 
         final ComponentName monitorService = new ComponentName(context, IksuMonitorService.class);
-        final JobInfo periodicWorkoutChecker = new JobInfo.Builder(IksuMonitorService.PERIODIC_JOB_ID, monitorService)
-            .setExtras(bundle)
-            .setPeriodic(PERIODIC_INTERVAL)
-            .build();
-
-        final long workoutCancellationDeadline = workout.getStartDate() - now - TimeUnit.HOURS.toMillis(1);
-        final JobInfo oneHourBeforeWorkoutChecker = new JobInfo.Builder(Integer.parseInt(workout.getId()), monitorService)
-            .setExtras(bundle)
-            .setMinimumLatency(workoutCancellationDeadline - TimeUnit.MINUTES.toMillis(2))
-            .setOverrideDeadline(workoutCancellationDeadline + TimeUnit.MINUTES.toMillis(2))
-            .build();
-
-        jobScheduler.schedule(periodicWorkoutChecker);
-        jobScheduler.schedule(oneHourBeforeWorkoutChecker);
+        jobScheduler.schedule(createPeriodicTask(monitorService, bundle, now));
+        jobScheduler.schedule(createOneHourBeforeTask(monitorService, bundle, workout, now));
     }
 
     public void unschedule(final Workout workout) {
@@ -97,5 +85,21 @@ public class WorkoutMonitorHelper {
                 jobScheduler.cancel(IksuMonitorService.PERIODIC_JOB_ID);
             }
         }
+    }
+
+    private JobInfo createPeriodicTask(ComponentName service, PersistableBundle bundle, long now) {
+        return new JobInfo.Builder(IksuMonitorService.PERIODIC_JOB_ID, service)
+            .setExtras(bundle)
+            .setPeriodic(PERIODIC_INTERVAL)
+            .build();
+    }
+
+    private JobInfo createOneHourBeforeTask(ComponentName service, PersistableBundle bundle, Workout workout, long now) {
+        final long workoutCancellationDeadline = workout.getStartDate() - now - TimeUnit.HOURS.toMillis(1);
+        return new JobInfo.Builder(Integer.parseInt(workout.getId()), service)
+            .setExtras(bundle)
+            .setMinimumLatency(workoutCancellationDeadline - TimeUnit.MINUTES.toMillis(2))
+            .setOverrideDeadline(workoutCancellationDeadline + TimeUnit.MINUTES.toMillis(2))
+            .build();
     }
 }
