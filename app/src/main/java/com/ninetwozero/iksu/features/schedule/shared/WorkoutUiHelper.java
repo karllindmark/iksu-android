@@ -91,6 +91,7 @@ public class WorkoutUiHelper {
             System.currentTimeMillis() < workout.getStartDate() &&
             (
                 (workout.isFullyBooked() && workout.isOpenForReservations() && !workout.hasReservation()) ||
+                (!workout.hasReservation() && workout.isMonitoring()) ||
                 (workout.hasReservation() && !workout.hasCheckedIn())
             )
         );
