@@ -9,6 +9,7 @@ import android.os.PersistableBundle;
 import com.ninetwozero.iksu.app.IksuApp;
 import com.ninetwozero.iksu.models.Workout;
 import com.ninetwozero.iksu.utils.Constants;
+import com.ninetwozero.iksu.utils.DateUtils;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,13 +33,12 @@ public class WorkoutMonitorHelper {
         Timber.i("Scheduling job for id=%s", workout.getId());
         Timber.i("Scheduling periodic job");
 
-        final long now = System.currentTimeMillis();
         final PersistableBundle bundle = new PersistableBundle();
         bundle.putString(Constants.USERNAME, IksuApp.getActiveUsername());
 
         final ComponentName monitorService = new ComponentName(context, IksuMonitorService.class);
-        jobScheduler.schedule(createPeriodicTask(monitorService, bundle, now));
-        jobScheduler.schedule(createOneHourBeforeTask(monitorService, bundle, workout, now));
+        jobScheduler.schedule(createPeriodicTask(monitorService, bundle));
+        jobScheduler.schedule(createOneHourBeforeTask(monitorService, bundle, workout));
     }
 
     public void unschedule(final Workout workout) {
@@ -87,19 +87,22 @@ public class WorkoutMonitorHelper {
         }
     }
 
-    private JobInfo createPeriodicTask(ComponentName service, PersistableBundle bundle, long now) {
+    private JobInfo createPeriodicTask(ComponentName service, PersistableBundle bundle) {
         return new JobInfo.Builder(IksuMonitorService.PERIODIC_JOB_ID, service)
             .setExtras(bundle)
             .setPeriodic(PERIODIC_INTERVAL)
+            .setPersisted(true)
             .build();
     }
 
-    private JobInfo createOneHourBeforeTask(ComponentName service, PersistableBundle bundle, Workout workout, long now) {
+    private JobInfo createOneHourBeforeTask(ComponentName service, PersistableBundle bundle, Workout workout) {
+        final long now = System.currentTimeMillis();
         final long workoutCancellationDeadline = workout.getStartDate() - now - TimeUnit.HOURS.toMillis(1);
         return new JobInfo.Builder(Integer.parseInt(workout.getId()), service)
             .setExtras(bundle)
             .setMinimumLatency(workoutCancellationDeadline - TimeUnit.MINUTES.toMillis(2))
             .setOverrideDeadline(workoutCancellationDeadline + TimeUnit.MINUTES.toMillis(2))
+            .setPersisted(true)
             .build();
     }
 }
